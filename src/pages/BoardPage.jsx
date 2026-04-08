@@ -250,6 +250,7 @@ export default function BoardPage() {
                     <Badge typeKey={g.direction} lookup={DIRECTIONS} />
                     {seats.length > 1 && <span style={{ fontSize: 11, color: C.teal }}>{seats.join("·")}석</span>}
                   </div>
+                  {g.phone && <p style={{ margin: "3px 0 0", fontSize: 12, color: C.teal }}>{g.phone}</p>}
                 </div>
                 <span style={{ fontSize: 12, color: C.teal, fontWeight: 700, flexShrink: 0 }}>완료 ✓</span>
                 <button onClick={() => unboard(g.id)} title="탑승 취소"
