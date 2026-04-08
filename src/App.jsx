@@ -5,12 +5,34 @@ import HoldButton from "./components/HoldButton";
 
 const FF = "system-ui,-apple-system,sans-serif";
 
+const GUEST_TYPES = [
+  { key: "민형측",  label: "민형측 하객",  color: "#3C3489", bg: "#EEEDFE" },
+  { key: "엄마측",  label: "엄마측 하객",  color: "#B5386A", bg: "#FDECF3" },
+  { key: "아빠측",  label: "아빠측 하객",  color: "#1B5FA8", bg: "#E8F1FC" },
+  { key: "부모님측", label: "부모님측 하객", color: "#8B6014", bg: "#FEF3E2" },
+];
+
+function TypeBadge({ guestType }) {
+  const t = GUEST_TYPES.find(t => t.key === guestType) ?? GUEST_TYPES[0];
+  return (
+    <span style={{
+      display: "inline-block",
+      padding: "2px 7px", borderRadius: 99,
+      fontSize: 11, fontWeight: 600,
+      color: t.color, background: t.bg,
+      flexShrink: 0,
+    }}>
+      {t.label}
+    </span>
+  );
+}
+
 export default function App() {
   const [view,     setView]     = useState("login");
   const [guests,   setGuests]   = useState([]);
   const [pw,       setPw]       = useState("");
   const [pwErr,    setPwErr]    = useState("");
-  const [form,     setForm]     = useState({ name: "", phone: "", seat: "" });
+  const [form,     setForm]     = useState({ name: "", phone: "", seat: "", guestType: "민형측" });
   const [formErr,  setFormErr]  = useState("");
   const [tab,      setTab]      = useState("board");
   const [justDone, setJustDone] = useState(false);
@@ -49,11 +71,12 @@ export default function App() {
       name: form.name.trim(),
       phone: form.phone.trim(),
       seat: sn,
+      guestType: form.guestType,
       boarded: false,
     };
     const u = [...guests, g].sort((a, b) => a.seat - b.seat);
     setGuests(u); await saveG(u);
-    setForm({ name: "", phone: "", seat: "" }); setFormErr("");
+    setForm({ name: "", phone: "", seat: "", guestType: form.guestType }); setFormErr("");
   }
 
   async function del(id) {
@@ -215,7 +238,10 @@ export default function App() {
                 </div>
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <p style={{ margin: 0, fontSize: 15, fontWeight: 600, color: C.text }}>{g.name}</p>
-                  <p style={{ margin: "1px 0 0", fontSize: 12, color: C.textSub }}>{g.phone || "전화번호 없음"}</p>
+                  <div style={{ display: "flex", alignItems: "center", gap: 5, marginTop: 3 }}>
+                    <TypeBadge guestType={g.guestType} />
+                    {g.phone && <span style={{ fontSize: 12, color: C.textSub }}>{g.phone}</span>}
+                  </div>
                 </div>
                 <HoldButton onConfirm={() => board(g.id)} label="꾹 눌러서 탑승" />
               </div>
@@ -244,7 +270,10 @@ export default function App() {
                 </div>
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <p style={{ margin: 0, fontSize: 15, fontWeight: 600, color: C.tealDark }}>{g.name}</p>
-                  <p style={{ margin: "1px 0 0", fontSize: 12, color: C.teal }}>{g.phone || "전화번호 없음"}</p>
+                  <div style={{ display: "flex", alignItems: "center", gap: 5, marginTop: 3 }}>
+                    <TypeBadge guestType={g.guestType} />
+                    {g.phone && <span style={{ fontSize: 12, color: C.teal }}>{g.phone}</span>}
+                  </div>
                 </div>
                 <span style={{ fontSize: 12, color: C.teal, fontWeight: 700, flexShrink: 0 }}>탑승완료 ✓</span>
                 <button onClick={() => unboard(g.id)} title="탑승 취소"
@@ -261,6 +290,25 @@ export default function App() {
       {tab === "add" && (
         <div style={{ background: C.white, border: `1px solid ${C.border}`, borderRadius: 14, padding: 22 }}>
           <p style={{ margin: "0 0 16px", fontSize: 16, fontWeight: 700, color: C.text }}>탑승자 추가</p>
+
+          {/* 손님 유형 선택 */}
+          <div style={{ marginBottom: 16 }}>
+            <p style={{ margin: "0 0 8px", fontSize: 12, fontWeight: 600, color: C.textSub }}>손님 유형 *</p>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6 }}>
+              {GUEST_TYPES.map(t => (
+                <button key={t.key} onClick={() => setForm(f => ({ ...f, guestType: t.key }))}
+                  style={{
+                    padding: "9px 0", borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: "pointer",
+                    border: `1.5px solid ${form.guestType === t.key ? t.color : C.border}`,
+                    background: form.guestType === t.key ? t.bg : C.white,
+                    color: form.guestType === t.key ? t.color : C.textSub,
+                  }}>
+                  {t.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
           {[["이름 *", "name", "홍길동", "text"], ["전화번호", "phone", "010-0000-0000", "tel"], ["좌석 번호 *", "seat", "예: 7", "number"]].map(([l, k, ph, t]) => (
             <div key={k} style={{ marginBottom: 13 }}>
               <p style={{ margin: "0 0 5px", fontSize: 12, fontWeight: 600, color: C.textSub }}>{l}</p>
@@ -281,10 +329,10 @@ export default function App() {
             <div style={{ marginTop: 20, borderTop: `1px solid ${C.border}`, paddingTop: 16 }}>
               <p style={{ margin: "0 0 10px", fontSize: 12, fontWeight: 600, color: C.textSub }}>현재 등록 · {total}명</p>
               {[...guests].sort((a, b) => a.seat - b.seat).map(g => (
-                <div key={g.id} style={{ display: "flex", alignItems: "center", gap: 8, padding: "7px 0", borderBottom: `1px solid ${C.grayPale}` }}>
+                <div key={g.id} style={{ display: "flex", alignItems: "center", gap: 8, padding: "8px 0", borderBottom: `1px solid ${C.grayPale}` }}>
                   <span style={{ fontSize: 12, fontWeight: 700, color: C.purple, width: 28, flexShrink: 0 }}>{g.seat}석</span>
                   <span style={{ flex: 1, fontSize: 13, color: C.text }}>{g.name}</span>
-                  <span style={{ fontSize: 12, color: C.textSub }}>{g.phone || "-"}</span>
+                  <TypeBadge guestType={g.guestType} />
                   <button onClick={() => del(g.id)} style={{ width: 24, height: 24, borderRadius: 5, border: `1px solid ${C.border}`, background: C.white, cursor: "pointer", fontSize: 11, color: C.red, flexShrink: 0 }}>
                     ✕
                   </button>
