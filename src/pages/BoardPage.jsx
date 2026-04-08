@@ -208,7 +208,7 @@ export default function BoardPage() {
                   </div>
                   {(seats.length > 0 || g.phone) && (
                     <p style={{ margin: "3px 0 0", fontSize: 12, color: C.textSub }}>
-                      <span>{seats.join("·")}석</span>
+                      <span>{seats.join("·")}좌석</span>
                       {g.phone && <span style={{ marginLeft: 6 }}>{g.phone}</span>}
                     </p>
                   )}
@@ -255,7 +255,7 @@ export default function BoardPage() {
                   </div>
                   {(seats.length > 0 || g.phone) && (
                     <p style={{ margin: "3px 0 0", fontSize: 12, color: C.teal }}>
-                      <span>{seats.join("·")}석</span>
+                      <span>{seats.join("·")}좌석</span>
                       {g.phone && <span style={{ marginLeft: 6 }}>{g.phone}</span>}
                     </p>
                   )}
