@@ -18,6 +18,25 @@ function Badge({ typeKey, lookup }) {
   );
 }
 
+// ── 전화번호 유틸 ─────────────────────────────────────────────────
+function formatPhone(raw) {
+  const d = raw.replace(/\D/g, '').slice(0, 11);
+  if (d.startsWith('02')) {
+    if (d.length <= 2)  return d;
+    if (d.length <= 5)  return `${d.slice(0,2)}-${d.slice(2)}`;
+    if (d.length <= 9)  return `${d.slice(0,2)}-${d.slice(2,5)}-${d.slice(5)}`;
+    return `${d.slice(0,2)}-${d.slice(2,6)}-${d.slice(6,10)}`;
+  }
+  if (d.length <= 3)  return d;
+  if (d.length <= 7)  return `${d.slice(0,3)}-${d.slice(3)}`;
+  return `${d.slice(0,3)}-${d.slice(3,7)}-${d.slice(7)}`;
+}
+
+function validatePhone(phone) {
+  if (!phone) return true; // 선택 항목
+  return /^\d{2,3}-\d{3,4}-\d{4}$/.test(phone);
+}
+
 // ── CSV 파싱 유틸 ──────────────────────────────────────────────────
 function splitCSVLine(line) {
   const result = [];
@@ -106,6 +125,7 @@ export default function AdminPage() {
 
   async function addGuest() {
     if (!form.name.trim()) return setFormErr("이름을 입력해주세요.");
+    if (form.phone && !validatePhone(form.phone)) return setFormErr("전화번호 형식이 올바르지 않습니다. (예: 010-1234-5678)");
     const sn = Number(form.seat);
     if (!form.seat || isNaN(sn) || sn < 1) return setFormErr("올바른 좌석 번호를 입력해주세요.");
     if (guests.find(g => g.seat === sn)) return setFormErr("이미 사용 중인 좌석입니다.");
@@ -267,10 +287,19 @@ export default function AdminPage() {
               <p style={{ margin: "0 0 5px", fontSize: 12, fontWeight: 600, color: C.textSub }}>{l}</p>
               <input
                 type={t} placeholder={ph} value={form[k]}
-                onChange={e => setForm(f => ({ ...f, [k]: e.target.value }))}
+                onChange={e => {
+                  const val = k === "phone" ? formatPhone(e.target.value) : e.target.value;
+                  setForm(f => ({ ...f, [k]: val }));
+                }}
                 onKeyDown={e => e.key === "Enter" && addGuest()}
-                style={{ width: "100%", padding: "11px 13px", borderRadius: 9, border: `1.5px solid ${C.border}`, fontSize: 15, boxSizing: "border-box", outline: "none" }}
+                style={{
+                  width: "100%", padding: "11px 13px", borderRadius: 9, fontSize: 15, boxSizing: "border-box", outline: "none",
+                  border: `1.5px solid ${k === "phone" && form.phone && !validatePhone(form.phone) ? C.red : C.border}`,
+                }}
               />
+              {k === "phone" && form.phone && !validatePhone(form.phone) && (
+                <p style={{ color: C.red, fontSize: 11, margin: "4px 0 0" }}>올바른 형식이 아닙니다 (예: 010-1234-5678)</p>
+              )}
             </div>
           ))}
           {formErr && <p style={{ color: C.red, fontSize: 12, margin: "0 0 10px" }}>{formErr}</p>}
