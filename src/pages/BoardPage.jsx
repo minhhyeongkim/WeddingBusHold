@@ -3,8 +3,13 @@ import { C } from "../constants/colors";
 import { GUEST_TYPES, DIRECTIONS } from "../constants/types";
 import { subscribeG, saveG } from "../utils/storage";
 import HoldButton from "../components/HoldButton";
+import BusSeatMap from "../components/BusSeatMap";
 
 const FF = "system-ui,-apple-system,sans-serif";
+
+// 구 데이터 호환: seat(단수) → seats(배열)
+const getSeats = (g) => Array.isArray(g.seats) ? g.seats : (g.seat ? [g.seat] : []);
+const firstSeat = (g) => getSeats(g)[0] ?? 0;
 
 function Badge({ typeKey, lookup }) {
   const t = lookup.find(x => x.key === typeKey);
@@ -20,8 +25,9 @@ function Badge({ typeKey, lookup }) {
 }
 
 export default function BoardPage() {
-  const [guests,   setGuests]   = useState([]);
-  const [justDone, setJustDone] = useState(false);
+  const [guests,    setGuests]    = useState([]);
+  const [direction, setDirection] = useState("상행");
+  const [justDone,  setJustDone]  = useState(false);
   const prevAll = useRef(false);
 
   useEffect(() => {
@@ -45,11 +51,24 @@ export default function BoardPage() {
     await saveG(u);
   }
 
+  // ── 파생 값 ──────────────────────────────────────────────────────
   const boarded = guests.filter(g => g.boarded).length;
   const total   = guests.length;
   const pct     = total > 0 ? Math.round((boarded / total) * 100) : 0;
-  const waiting = [...guests].filter(g => !g.boarded).sort((a, b) => a.seat - b.seat);
-  const done    = [...guests].filter(g =>  g.boarded).sort((a, b) => a.seat - b.seat);
+
+  // direction 필터: 동시 포함
+  const inDir = (g) => {
+    const d = g.direction ?? "동시";
+    return d === direction || d === "동시";
+  };
+
+  const waiting = guests.filter(g => !g.boarded && inDir(g)).sort((a, b) => firstSeat(a) - firstSeat(b));
+  const done    = guests.filter(g =>  g.boarded && inDir(g)).sort((a, b) => firstSeat(a) - firstSeat(b));
+
+  // 좌석 맵 데이터
+  const boardedSeats  = done.flatMap(getSeats);
+  const guestSeatMap  = {};
+  [...waiting, ...done].forEach(g => getSeats(g).forEach(s => { guestSeatMap[s] = g.name; }));
 
   // ── 출발 준비 완료 ─────────────────────────────────────────────────
   if (justDone) return (
@@ -94,15 +113,13 @@ export default function BoardPage() {
             <p style={{ margin: "2px 0 0", fontSize: 11, color: C.orangeLight }}>탑승완료</p>
           </div>
         </div>
-
         {total > 0 && (
           <div style={{ marginTop: 14 }}>
             <div style={{ height: 8, background: "rgba(255,255,255,0.25)", borderRadius: 99, overflow: "hidden" }}>
               <div style={{
                 height: "100%", borderRadius: 99,
                 background: allBoarded ? "#5DCAA5" : "rgba(255,255,255,0.75)",
-                width: `${pct}%`,
-                transition: "width 0.45s cubic-bezier(.4,0,.2,1)",
+                width: `${pct}%`, transition: "width 0.45s cubic-bezier(.4,0,.2,1)",
               }} />
             </div>
             <div style={{ display: "flex", justifyContent: "space-between", marginTop: 5 }}>
@@ -115,9 +132,19 @@ export default function BoardPage() {
         )}
       </div>
 
+      {/* 좌석 배치도 (방향 토글 포함) */}
+      <div style={{ marginBottom: 16 }}>
+        <BusSeatMap
+          direction={direction}
+          onDirectionChange={setDirection}
+          boardedSeats={boardedSeats}
+          guestSeatMap={guestSeatMap}
+        />
+      </div>
+
       {/* 비어있음 */}
       {guests.length === 0 && (
-        <div style={{ textAlign: "center", padding: "52px 0", color: C.textSub, fontSize: 14 }}>
+        <div style={{ textAlign: "center", padding: "32px 0", color: C.textSub, fontSize: 14 }}>
           등록된 탑승자가 없습니다<br />
           <span style={{ fontSize: 12 }}>관리자 페이지에서 탑승자를 추가해주세요</span>
         </div>
@@ -137,26 +164,36 @@ export default function BoardPage() {
           <p style={{ margin: "0 0 7px 2px", fontSize: 11, fontWeight: 700, color: C.textSub, letterSpacing: "0.06em" }}>
             미탑승 · {waiting.length}명
           </p>
-          {waiting.map(g => (
-            <div key={g.id} style={{
-              background: C.white, border: `1.5px solid ${C.border}`,
-              borderRadius: 12, padding: "12px 13px", marginBottom: 8,
-              display: "flex", alignItems: "center", gap: 10,
-            }}>
-              <div style={{ width: 42, height: 42, borderRadius: 10, background: C.orangePale, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                <span style={{ fontSize: 16, fontWeight: 700, color: C.orange }}>{g.seat}</span>
-              </div>
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <p style={{ margin: 0, fontSize: 15, fontWeight: 600, color: C.text }}>{g.name}</p>
-                <div style={{ display: "flex", alignItems: "center", gap: 4, marginTop: 3, flexWrap: "wrap" }}>
-                  <Badge typeKey={g.guestType} lookup={GUEST_TYPES} />
-                  <Badge typeKey={g.direction} lookup={DIRECTIONS} />
-                  {g.phone && <span style={{ fontSize: 12, color: C.textSub }}>{g.phone}</span>}
+          {waiting.map(g => {
+            const seats = getSeats(g);
+            return (
+              <div key={g.id} style={{
+                background: C.white, border: `1.5px solid ${C.border}`,
+                borderRadius: 12, padding: "12px 13px", marginBottom: 8,
+                display: "flex", alignItems: "center", gap: 10,
+              }}>
+                <div style={{ width: 42, height: 42, borderRadius: 10, background: C.orangePale, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                  {seats.length > 1
+                    ? <><span style={{ fontSize: 13, fontWeight: 700, color: C.orange, lineHeight: 1 }}>{seats[0]}</span>
+                        <span style={{ fontSize: 9, color: C.orangeMid, lineHeight: 1 }}>+{seats.length - 1}석</span></>
+                    : <span style={{ fontSize: 16, fontWeight: 700, color: C.orange }}>{seats[0]}</span>
+                  }
                 </div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <p style={{ margin: 0, fontSize: 15, fontWeight: 600, color: C.text }}>
+                    {g.name}{seats.length > 1 && <span style={{ fontSize: 12, fontWeight: 400, color: C.textSub }}> ({seats.length}명)</span>}
+                  </p>
+                  <div style={{ display: "flex", alignItems: "center", gap: 4, marginTop: 3, flexWrap: "wrap" }}>
+                    <Badge typeKey={g.guestType} lookup={GUEST_TYPES} />
+                    <Badge typeKey={g.direction} lookup={DIRECTIONS} />
+                    {seats.length > 1 && <span style={{ fontSize: 11, color: C.textSub }}>{seats.join("·")}석</span>}
+                    {g.phone && <span style={{ fontSize: 12, color: C.textSub }}>{g.phone}</span>}
+                  </div>
+                </div>
+                <HoldButton onConfirm={() => board(g.id)} label="꾹 눌러서 탑승" />
               </div>
-              <HoldButton onConfirm={() => board(g.id)} label="꾹 눌러서 탑승" />
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
 
@@ -170,29 +207,39 @@ export default function BoardPage() {
           <p style={{ margin: "0 0 7px 2px", fontSize: 11, fontWeight: 700, color: C.teal, letterSpacing: "0.06em" }}>
             탑승완료 · {done.length}명
           </p>
-          {done.map(g => (
-            <div key={g.id} style={{
-              background: "#f8fcfa", border: `1.5px solid ${C.teal}`,
-              borderRadius: 12, padding: "11px 13px", marginBottom: 7,
-              display: "flex", alignItems: "center", gap: 10, opacity: 0.75,
-            }}>
-              <div style={{ width: 42, height: 42, borderRadius: 10, background: C.tealPale, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                <span style={{ fontSize: 16, fontWeight: 700, color: C.tealDark }}>{g.seat}</span>
-              </div>
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <p style={{ margin: 0, fontSize: 15, fontWeight: 600, color: C.tealDark }}>{g.name}</p>
-                <div style={{ display: "flex", alignItems: "center", gap: 4, marginTop: 3, flexWrap: "wrap" }}>
-                  <Badge typeKey={g.guestType} lookup={GUEST_TYPES} />
-                  <Badge typeKey={g.direction} lookup={DIRECTIONS} />
+          {done.map(g => {
+            const seats = getSeats(g);
+            return (
+              <div key={g.id} style={{
+                background: "#f8fcfa", border: `1.5px solid ${C.teal}`,
+                borderRadius: 12, padding: "11px 13px", marginBottom: 7,
+                display: "flex", alignItems: "center", gap: 10, opacity: 0.75,
+              }}>
+                <div style={{ width: 42, height: 42, borderRadius: 10, background: C.tealPale, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                  {seats.length > 1
+                    ? <><span style={{ fontSize: 13, fontWeight: 700, color: C.tealDark, lineHeight: 1 }}>{seats[0]}</span>
+                        <span style={{ fontSize: 9, color: C.teal, lineHeight: 1 }}>+{seats.length - 1}석</span></>
+                    : <span style={{ fontSize: 16, fontWeight: 700, color: C.tealDark }}>{seats[0]}</span>
+                  }
                 </div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <p style={{ margin: 0, fontSize: 15, fontWeight: 600, color: C.tealDark }}>
+                    {g.name}{seats.length > 1 && <span style={{ fontSize: 12, fontWeight: 400, color: C.teal }}> ({seats.length}명)</span>}
+                  </p>
+                  <div style={{ display: "flex", alignItems: "center", gap: 4, marginTop: 3, flexWrap: "wrap" }}>
+                    <Badge typeKey={g.guestType} lookup={GUEST_TYPES} />
+                    <Badge typeKey={g.direction} lookup={DIRECTIONS} />
+                    {seats.length > 1 && <span style={{ fontSize: 11, color: C.teal }}>{seats.join("·")}석</span>}
+                  </div>
+                </div>
+                <span style={{ fontSize: 12, color: C.teal, fontWeight: 700, flexShrink: 0 }}>완료 ✓</span>
+                <button onClick={() => unboard(g.id)} title="탑승 취소"
+                  style={{ width: 30, height: 30, borderRadius: 7, border: `1px solid ${C.border}`, background: C.white, cursor: "pointer", fontSize: 13, color: C.amber, flexShrink: 0 }}>
+                  ↩
+                </button>
               </div>
-              <span style={{ fontSize: 12, color: C.teal, fontWeight: 700, flexShrink: 0 }}>완료 ✓</span>
-              <button onClick={() => unboard(g.id)} title="탑승 취소"
-                style={{ width: 30, height: 30, borderRadius: 7, border: `1px solid ${C.border}`, background: C.white, cursor: "pointer", fontSize: 13, color: C.amber, flexShrink: 0 }}>
-                ↩
-              </button>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
 
