@@ -25,9 +25,10 @@ function Badge({ typeKey, lookup }) {
 }
 
 export default function BoardPage() {
-  const [guests,    setGuests]    = useState([]);
-  const [direction, setDirection] = useState("상행");
-  const [justDone,  setJustDone]  = useState(false);
+  const [guests,      setGuests]      = useState([]);
+  const [direction,   setDirection]   = useState("상행");
+  const [seatMapOpen, setSeatMapOpen] = useState(false);
+  const [justDone,    setJustDone]    = useState(false);
   const prevAll = useRef(false);
 
   useEffect(() => {
@@ -132,15 +133,33 @@ export default function BoardPage() {
         )}
       </div>
 
-      {/* 좌석 배치도 (방향 토글 포함) */}
-      <div style={{ marginBottom: 16 }}>
-        <BusSeatMap
-          direction={direction}
-          onDirectionChange={setDirection}
-          boardedSeats={boardedSeats}
-          guestSeatMap={guestSeatMap}
-        />
-      </div>
+      {/* 좌석배치표 토글 버튼 */}
+      <button
+        onClick={() => setSeatMapOpen(v => !v)}
+        style={{
+          width: "100%", padding: "10px 14px", marginBottom: 14,
+          borderRadius: 10, border: `1.5px solid ${seatMapOpen ? C.orange : C.border}`,
+          background: seatMapOpen ? C.orangePale : C.white,
+          color: seatMapOpen ? C.orange : C.textSub,
+          fontSize: 13, fontWeight: 600, cursor: "pointer",
+          display: "flex", alignItems: "center", justifyContent: "space-between",
+        }}
+      >
+        <span>🗺 좌석배치표 보기</span>
+        <span style={{ fontSize: 11 }}>{seatMapOpen ? "▲ 닫기" : "▼ 열기"}</span>
+      </button>
+
+      {/* 좌석 배치도 (접기/펼치기) */}
+      {seatMapOpen && (
+        <div style={{ marginBottom: 16 }}>
+          <BusSeatMap
+            direction={direction}
+            onDirectionChange={setDirection}
+            boardedSeats={boardedSeats}
+            guestSeatMap={guestSeatMap}
+          />
+        </div>
+      )}
 
       {/* 비어있음 */}
       {guests.length === 0 && (
