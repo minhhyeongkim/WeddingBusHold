@@ -88,10 +88,7 @@ export default function HoldButton({
             strokeLinecap="round"
             transform="rotate(-90 20 20)"
           />
-          <text x={20} y={20} textAnchor="middle" dominantBaseline="central"
-            style={{ fontSize: 11, fontWeight: 700, fill: C.purple }}>
-            {pct}
-          </text>
+
         </svg>
       )}
 

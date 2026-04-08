@@ -2,7 +2,7 @@ import { db } from "./firebase";
 import { ref, get, set } from "firebase/database";
 
 export const ADMIN_CODE = "admin1234";
-export const HOLD_MS    = 800;
+export const HOLD_MS    = 500;
 
 const KEY = "wbus6";
 
