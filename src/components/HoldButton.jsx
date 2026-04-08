@@ -55,9 +55,9 @@ export default function HoldButton({
         display: "flex", alignItems: "center", gap: 7,
         padding: holding ? "8px 14px 8px 8px" : "8px 14px",
         borderRadius: 10,
-        border: `1.5px solid ${holding ? C.purple : C.border}`,
-        background: holding ? C.purplePale : C.white,
-        color: C.purple,
+        border: `1.5px solid ${holding ? C.orange : C.border}`,
+        background: holding ? C.orangePale : C.white,
+        color: C.orange,
         fontSize: 13, fontWeight: 700,
         cursor: "pointer",
         userSelect: "none",
@@ -67,28 +67,24 @@ export default function HoldButton({
         overflow: "hidden",
       }}
     >
-      {/* fill sweep background */}
       {holding && (
         <div style={{
           position: "absolute", inset: 0,
-          background: C.purplePale,
+          background: C.orangePale,
           clipPath: `inset(0 ${100 - pct}% 0 0)`,
-          transition: "none",
           borderRadius: 10,
           zIndex: 0,
         }} />
       )}
 
-      {/* circular progress ring */}
       {holding && (
         <svg width={40} height={40} style={{ flexShrink: 0, zIndex: 1 }}>
           <circle cx={20} cy={20} r={r} fill="none" stroke={C.grayLight} strokeWidth={3} />
-          <circle cx={20} cy={20} r={r} fill="none" stroke={C.purple}    strokeWidth={3}
+          <circle cx={20} cy={20} r={r} fill="none" stroke={C.orange}    strokeWidth={3}
             strokeDasharray={`${dash} ${circ - dash}`}
             strokeLinecap="round"
             transform="rotate(-90 20 20)"
           />
-
         </svg>
       )}
 
