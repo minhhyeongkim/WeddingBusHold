@@ -206,8 +206,8 @@ export default function BoardPage() {
                     <Badge typeKey={g.guestType} lookup={GUEST_TYPES} />
                     <Badge typeKey={g.direction} lookup={DIRECTIONS} />
                     {seats.length > 1 && <span style={{ fontSize: 11, color: C.textSub }}>{seats.join("·")}석</span>}
-                    {g.phone && <span style={{ fontSize: 12, color: C.textSub }}>{g.phone}</span>}
                   </div>
+                  {g.phone && <p style={{ margin: "3px 0 0", fontSize: 12, color: C.textSub }}>{g.phone}</p>}
                 </div>
                 <HoldButton onConfirm={() => board(g.id)} label="꾹 눌러서 탑승" />
               </div>
