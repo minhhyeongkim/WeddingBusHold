@@ -29,6 +29,12 @@ const inDir = (g, dir) => {
   return d === dir || d === "동시";
 };
 
+// 방향별 탑승 여부 (구 데이터 boarded 필드 호환)
+const isBoarded = (g, dir) =>
+  dir === "상행"
+    ? (g.boardedUp  ?? g.boarded ?? false)
+    : (g.boardedDown ?? g.boarded ?? false);
+
 export default function BoardPage() {
   const [guests,      setGuests]      = useState([]);
   const [direction,   setDirection]   = useState("상행");
@@ -44,7 +50,7 @@ export default function BoardPage() {
 
   // 현재 탭 방향 전원 탑승 시 완료 화면
   const dirGuests  = guests.filter(g => inDir(g, direction));
-  const allBoarded = dirGuests.length > 0 && dirGuests.every(g => g.boarded);
+  const allBoarded = dirGuests.length > 0 && dirGuests.every(g => isBoarded(g, direction));
   useEffect(() => {
     const prevRef = direction === "상행" ? prevAllUp : prevAllDown;
     if (allBoarded && !prevRef.current && dirGuests.length > 0) setJustDone(true);
@@ -52,12 +58,14 @@ export default function BoardPage() {
   }, [allBoarded, direction, dirGuests.length]);
 
   async function board(id) {
-    const u = guests.map(g => g.id === id ? { ...g, boarded: true } : g);
+    const field = direction === "상행" ? "boardedUp" : "boardedDown";
+    const u = guests.map(g => g.id === id ? { ...g, [field]: true } : g);
     await saveG(u);
   }
 
   async function unboard(id) {
-    const u = guests.map(g => g.id === id ? { ...g, boarded: false } : g);
+    const field = direction === "상행" ? "boardedUp" : "boardedDown";
+    const u = guests.map(g => g.id === id ? { ...g, [field]: false } : g);
     await saveG(u);
   }
 
@@ -65,8 +73,8 @@ export default function BoardPage() {
   const upGuests   = guests.filter(g => inDir(g, "상행"));
   const downGuests = guests.filter(g => inDir(g, "하행"));
 
-  const upBoarded   = upGuests.filter(g => g.boarded).length;
-  const downBoarded = downGuests.filter(g => g.boarded).length;
+  const upBoarded   = upGuests.filter(g => isBoarded(g, "상행")).length;
+  const downBoarded = downGuests.filter(g => isBoarded(g, "하행")).length;
   const upTotal     = upGuests.length;
   const downTotal   = downGuests.length;
   const upPct       = upTotal   > 0 ? Math.round((upBoarded   / upTotal)   * 100) : 0;
@@ -79,8 +87,8 @@ export default function BoardPage() {
     ? (upTotal   > 0 && upBoarded   === upTotal)
     : (downTotal > 0 && downBoarded === downTotal);
 
-  const waiting = dirGuests.filter(g => !g.boarded).sort((a, b) => firstSeat(a) - firstSeat(b));
-  const done    = dirGuests.filter(g =>  g.boarded).sort((a, b) => firstSeat(a) - firstSeat(b));
+  const waiting = dirGuests.filter(g => !isBoarded(g, direction)).sort((a, b) => firstSeat(a) - firstSeat(b));
+  const done    = dirGuests.filter(g =>  isBoarded(g, direction)).sort((a, b) => firstSeat(a) - firstSeat(b));
 
   const boardedSeats  = done.flatMap(getSeats);
   const guestSeatMap  = {};

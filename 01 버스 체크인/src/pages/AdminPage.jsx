@@ -165,7 +165,8 @@ export default function AdminPage() {
     const g = {
       id: Math.random().toString(36).slice(2) + Date.now().toString(36),
       name: form.name.trim(), phone: form.phone.trim(),
-      seats: seatNums, guestType: form.guestType, direction: form.direction, boarded: false,
+      seats: seatNums, guestType: form.guestType, direction: form.direction,
+      boardedUp: false, boardedDown: false,
     };
     const u = [...guests, g].sort((a, b) => getSeats(a)[0] - getSeats(b)[0]);
     setGuests(u); await saveG(u);
@@ -200,7 +201,7 @@ export default function AdminPage() {
     if (!preview?.toAdd?.length) return;
     const newGuests = preview.toAdd.map(r => ({
       id: Math.random().toString(36).slice(2) + Date.now().toString(36),
-      ...r, boarded: false,
+      ...r, boardedUp: false, boardedDown: false,
     }));
     const u = [...guests, ...newGuests].sort((a, b) => getSeats(a)[0] - getSeats(b)[0]);
     setGuests(u); await saveG(u);
