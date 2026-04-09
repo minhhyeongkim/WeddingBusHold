@@ -73,10 +73,10 @@ export default function BoardPage() {
   const upGuests   = guests.filter(g => inDir(g, "상행"));
   const downGuests = guests.filter(g => inDir(g, "하행"));
 
-  const upBoarded   = upGuests.filter(g => isBoarded(g, "상행")).reduce((s, g) => s + getSeats(g).length, 0);
-  const downBoarded = downGuests.filter(g => isBoarded(g, "하행")).reduce((s, g) => s + getSeats(g).length, 0);
-  const upTotal     = upGuests.reduce((s, g) => s + getSeats(g).length, 0);
-  const downTotal   = downGuests.reduce((s, g) => s + getSeats(g).length, 0);
+  const upBoarded   = upGuests.filter(g => isBoarded(g, "상행")).length;
+  const downBoarded = downGuests.filter(g => isBoarded(g, "하행")).length;
+  const upTotal     = upGuests.length;
+  const downTotal   = downGuests.length;
   const upPct       = upTotal   > 0 ? Math.round((upBoarded   / upTotal)   * 100) : 0;
   const downPct     = downTotal > 0 ? Math.round((downBoarded / downTotal) * 100) : 0;
 
