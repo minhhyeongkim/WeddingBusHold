@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%"   stop-color="#fdf6e8"/>
+      <stop offset="50%"  stop-color="#faf0ec"/>
+      <stop offset="100%" stop-color="#f5e8e0"/>
+    </linearGradient>
+    <filter id="shadow" x="-8%" y="-8%" width="116%" height="130%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="16"/>
+      <feOffset dx="0" dy="8"/>
+      <feComponentTransfer><feFuncA type="linear" slope="0.10"/></feComponentTransfer>
+      <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bg)"/>
+
+  <!-- Decorative blobs -->
+  <circle cx="80"   cy="80"  r="100" fill="#e8d5b0" opacity="0.40"/>
+  <circle cx="1120" cy="550" r="120" fill="#e8d5b0" opacity="0.30"/>
+  <circle cx="60"   cy="560" r="70"  fill="#f4c8d0" opacity="0.35"/>
+  <circle cx="1150" cy="90"  r="80"  fill="#f4c8d0" opacity="0.30"/>
+
+  <!-- Card -->
+  <rect x="240" y="80" width="720" height="470" rx="28" fill="white" opacity="0.97" filter="url(#shadow)"/>
+  <!-- Card top accent -->
+  <rect x="240" y="80" width="720" height="6" rx="3" fill="#b8944a" opacity="0.85"/>
+
+  <!-- Label -->
+  <text x="600" y="168"
+    text-anchor="middle" font-size="14" font-weight="500"
+    fill="#b8944a" letter-spacing="6"
+    font-family="system-ui,sans-serif">
+    WEDDING GUIDE
+  </text>
+
+  <!-- 💍 emoji area -->
+  <text x="600" y="260"
+    text-anchor="middle" font-size="64"
+    font-family="system-ui,sans-serif">
+    💍
+  </text>
+
+  <!-- Title -->
+  <text x="600" y="340"
+    text-anchor="middle" font-size="48" font-weight="700"
+    fill="#1a1a1a" letter-spacing="-1"
+    font-family="system-ui,sans-serif">
+    혼주 가족 결혼식 안내
+  </text>
+
+  <!-- Names -->
+  <text x="600" y="398"
+    text-anchor="middle" font-size="22" font-weight="600"
+    fill="#c0607a"
+    font-family="system-ui,sans-serif">
+    임동빈 · 김민형
+  </text>
+
+  <!-- Date & venue -->
+  <text x="600" y="440"
+    text-anchor="middle" font-size="18" fill="#5a6070"
+    font-family="system-ui,sans-serif">
+    2026년 4월 12일 토요일 · 아벤티움 웨딩홀 · 12:30 예식
+  </text>
+
+  <!-- Dot decoration -->
+  <circle cx="564" cy="490" r="4" fill="#b8944a" opacity="0.4"/>
+  <circle cx="584" cy="490" r="4" fill="#b8944a" opacity="0.6"/>
+  <circle cx="600" cy="490" r="5" fill="#b8944a"/>
+  <circle cx="616" cy="490" r="4" fill="#b8944a" opacity="0.6"/>
+  <circle cx="636" cy="490" r="4" fill="#b8944a" opacity="0.4"/>
+</svg>
