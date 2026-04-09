@@ -55,20 +55,6 @@ export default function BusSeatMap({
   return (
     <div style={{ fontFamily: "system-ui,-apple-system,sans-serif" }}>
 
-      {/* 방향 토글 */}
-      <div style={{ display: "flex", gap: 6, marginBottom: 12 }}>
-        {[["상행", "↑ 상행"], ["하행", "↓ 하행"]].map(([key, label]) => (
-          <button key={key} onClick={() => onDirectionChange(key)} style={{
-            flex: 1, padding: "9px 0", borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: "pointer",
-            border: `1.5px solid ${direction === key ? C.orange : C.border}`,
-            background: direction === key ? C.orangePale : C.white,
-            color: direction === key ? C.orange : C.textSub,
-          }}>
-            {label}
-          </button>
-        ))}
-      </div>
-
       {/* 버스 레이아웃 */}
       <div style={{ background: C.grayPale, borderRadius: 14, padding: "12px 10px", border: `1px solid ${C.border}` }}>
 
