@@ -123,7 +123,7 @@ export default function BoardPage() {
   );
 
   return (
-    <div style={{ fontFamily: FF, maxWidth: 480, margin: "0 auto", padding: "0 0 72px" }}>
+    <div style={{ fontFamily: FF, maxWidth: 480, margin: "0 auto", padding: "0 0 32px" }}>
 
       {/* ── 최상단 방향 탭 ── */}
       <div style={{
@@ -345,19 +345,6 @@ export default function BoardPage() {
         )}
       </div>
 
-      {/* 하단 관리자 링크 */}
-      <div style={{
-        position: "fixed", bottom: 0, left: 0, right: 0,
-        display: "flex", justifyContent: "flex-end",
-        padding: "10px 16px",
-        background: "rgba(255,255,255,0.92)", backdropFilter: "blur(8px)",
-        borderTop: `1px solid ${C.border}`,
-      }}>
-        <button onClick={() => { window.location.hash = "admin"; }}
-          style={{ padding: "8px 16px", borderRadius: 8, border: `1px solid ${C.border}`, background: C.white, fontSize: 12, color: C.textSub, cursor: "pointer" }}>
-          관리자 페이지 →
-        </button>
-      </div>
     </div>
   );
 }
