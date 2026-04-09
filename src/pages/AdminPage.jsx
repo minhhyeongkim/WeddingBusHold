@@ -71,10 +71,12 @@ function csvRowToGuest(row) {
   const name = row['이름'] || row['name'] || ''; if (!name) return null;
   const phone = row['전화번호'] || row['연락처'] || row['phone'] || '';
   const seatStr = row['좌석번호'] || row['좌석'] || row['seat'] || '';
-  const seat = parseInt(seatStr); if (!seat || isNaN(seat) || seat < 1) return null;
+  // 쉼표/공백으로 구분된 다중 좌석 지원 (예: "3,4,5" 또는 "3 4 5")
+  const seats = seatStr.split(/[,\s]+/).map(s => parseInt(s.trim())).filter(n => !isNaN(n) && n >= 1 && n <= 28);
+  if (seats.length === 0) return null;
   const guestType = normalizeGuestType(row['손님유형'] || row['유형'] || row['guesttype'] || '');
   const direction = normalizeDirection(row['방향'] || row['탑승방향'] || row['direction'] || '');
-  return { name, phone, seats: [seat], guestType, direction };
+  return { name, phone, seats, guestType, direction };
 }
 
 // ── 인원수 스테퍼 ────────────────────────────────────────────────
