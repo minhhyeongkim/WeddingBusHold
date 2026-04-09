@@ -389,31 +389,23 @@
       margin-bottom: 8px;
       box-shadow: var(--shadow);
       display: flex;
-      align-items: stretch;
-      gap: 12px;
+      flex-direction: column;
+      gap: 6px;
     }
     .entry-item.editing {
       border: 2px solid var(--border-focus);
     }
 
-    /* 1열: 장부번호 + 이름 + 금액 */
-    .entry-col1 { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: center; gap: 2px; }
-    .entry-name-row { display: flex; align-items: baseline; gap: 6px; }
+    /* 1행: 장부번호 + 이름 + 금액 */
+    .entry-row1 { display: flex; align-items: baseline; gap: 8px; }
     .entry-ledger { font-size: 12px; font-weight: 700; color: var(--text-sub); flex-shrink: 0; }
-    .entry-name   { font-size: 15px; font-weight: 700; }
-    .entry-amount { font-size: 15px; font-weight: 700; margin-top: 2px; }
-    .entry-memo   { font-size: 12px; color: var(--text-sub); margin-top: 2px; }
+    .entry-name   { font-size: 15px; font-weight: 700; flex: 1; min-width: 0; }
+    .entry-amount { font-size: 15px; font-weight: 700; flex-shrink: 0; }
+    .entry-memo   { font-size: 12px; color: var(--text-sub); }
 
-    /* 2열: 손님유형 + 시간 + 버튼 */
-    .entry-col2 {
-      flex-shrink: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-      justify-content: space-between;
-      gap: 4px;
-    }
-    .entry-time { font-size: 11px; color: var(--text-sub); }
+    /* 2행: 손님유형 + 시간 + 버튼 */
+    .entry-row2 { display: flex; align-items: center; gap: 6px; }
+    .entry-time { font-size: 11px; color: var(--text-sub); flex: 1; }
 
     .row-btns { display: flex; gap: 4px; }
     .btn-edit, .btn-del {
@@ -955,17 +947,15 @@ function renderInputListView() {
 
     return `
       <div class="entry-item">
-        <div class="entry-col1">
-          <div class="entry-name-row">
-            <span class="entry-ledger">#${e.ledger_no ?? '—'}</span>
-            <span class="entry-name">${esc(e.name)}</span>
-          </div>
-          <div class="entry-amount">${fmt(e.amount)}</div>
-          ${e.memo ? `<div class="entry-memo">${esc(e.memo)}</div>` : ''}
+        <div class="entry-row1">
+          <span class="entry-ledger">#${e.ledger_no ?? '—'}</span>
+          <span class="entry-name">${esc(e.name)}</span>
+          <span class="entry-amount">${fmt(e.amount)}</span>
         </div>
-        <div class="entry-col2">
+        ${e.memo ? `<div class="entry-memo">${esc(e.memo)}</div>` : ''}
+        <div class="entry-row2">
           ${badgeHtml(e.guest_type)}
-          <div class="entry-time">${e.ts}</div>
+          <span class="entry-time">${e.ts}</span>
           <div class="row-btns">
             <button class="btn-edit" onclick="startEdit('${e.id}')">수정</button>
             <button class="btn-del"  onclick="deleteEntry('${e.id}')">삭제</button>
