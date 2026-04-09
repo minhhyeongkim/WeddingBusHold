@@ -115,8 +115,8 @@ export default function BoardPage() {
 
       {/* ── 최상단 방향 탭 ── */}
       <div style={{
-        display: "flex", gap: 0,
-        background: C.orange, borderRadius: "0 0 0 0",
+        display: "flex", gap: 8, padding: "12px 13px 0",
+        background: "#1a1a1a",
       }}>
         {[
           { key: "상행", label: "↑ 상행", boarded: upBoarded, total: upTotal, pct: upPct },
@@ -126,24 +126,28 @@ export default function BoardPage() {
           const allDone = t > 0 && b === t;
           return (
             <button key={key} onClick={() => { setDirection(key); setSeatMapOpen(false); }} style={{
-              flex: 1, padding: "14px 12px 12px",
-              background: active ? C.orange : "rgba(0,0,0,0.18)",
+              flex: 1, padding: "12px 14px 14px",
+              background: active ? C.orange : "#2e2e2e",
               border: "none", cursor: "pointer",
-              borderBottom: active ? `3px solid #fff` : "3px solid transparent",
+              borderRadius: "10px 10px 0 0",
               transition: "background 0.15s",
             }}>
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                <span style={{ fontSize: 15, fontWeight: 700, color: active ? "#FFF7F2" : "rgba(255,255,255,0.65)" }}>{label}</span>
-                <span style={{ fontSize: 13, color: active ? (allDone ? "#5DCAA5" : "rgba(255,255,255,0.85)") : "rgba(255,255,255,0.5)", fontWeight: 600 }}>
-                  {allDone ? "완료 ✓" : `${b}/${t}`}
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 6 }}>
+                <span style={{ fontSize: 15, fontWeight: 800, color: active ? "#fff" : "#888", letterSpacing: "0.02em" }}>{label}</span>
+                <span style={{
+                  fontSize: 12, fontWeight: 700,
+                  color: active ? (allDone ? "#5DCAA5" : "rgba(255,255,255,0.9)") : "#666",
+                  background: active ? "rgba(0,0,0,0.15)" : "rgba(255,255,255,0.06)",
+                  padding: "2px 8px", borderRadius: 99,
+                }}>
+                  {allDone ? "완료 ✓" : `${b} / ${t}`}
                 </span>
               </div>
-              {/* 방향별 미니 프로그레스 바 */}
               {t > 0 && (
-                <div style={{ height: 4, background: "rgba(255,255,255,0.2)", borderRadius: 99, overflow: "hidden", marginTop: 7 }}>
+                <div style={{ height: 5, background: active ? "rgba(255,255,255,0.25)" : "rgba(255,255,255,0.08)", borderRadius: 99, overflow: "hidden" }}>
                   <div style={{
                     height: "100%", borderRadius: 99,
-                    background: allDone ? "#5DCAA5" : "rgba(255,255,255,0.75)",
+                    background: allDone ? "#5DCAA5" : (active ? "#fff" : "#555"),
                     width: `${p}%`, transition: "width 0.45s cubic-bezier(.4,0,.2,1)",
                   }} />
                 </div>
@@ -153,10 +157,9 @@ export default function BoardPage() {
         })}
       </div>
 
-      <div style={{ padding: "14px 13px 0" }}>
-
-        {/* ── 헤더 (현재 방향 상세) ── */}
-        <div style={{ background: C.orange, borderRadius: 16, padding: "16px 20px", marginBottom: 14 }}>
+      {/* 탭~헤더 연결 배경 */}
+      <div style={{ background: "#1a1a1a", padding: "0 13px 14px" }}>
+        <div style={{ background: C.orange, borderRadius: 16, padding: "16px 20px" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
             <div>
               <p style={{ margin: 0, fontSize: 11, color: C.orangeLight, fontWeight: 600, letterSpacing: "0.08em" }}>WEDDING BUS · {direction}</p>
@@ -189,6 +192,10 @@ export default function BoardPage() {
             </div>
           )}
         </div>
+      </div>
+
+      {/* 본문 */}
+      <div style={{ padding: "14px 13px 0" }}>
 
         {/* 좌석배치표 토글 */}
         <button onClick={() => setSeatMapOpen(v => !v)} style={{
