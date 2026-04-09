@@ -118,10 +118,12 @@ export default function AdminPage() {
     guestType: "민형측", direction: "동시",
   });
   const [formErr,  setFormErr]  = useState("");
-  const [sheetUrl, setSheetUrl] = useState("");
-  const [preview,  setPreview]  = useState(null);
-  const [fetching, setFetching] = useState(false);
-  const [fetchErr, setFetchErr] = useState("");
+  const [sheetUrl,  setSheetUrl]  = useState("");
+  const [preview,   setPreview]   = useState(null);
+  const [fetching,  setFetching]  = useState(false);
+  const [fetchErr,  setFetchErr]  = useState("");
+  const [editId,    setEditId]    = useState(null);
+  const [editForm,  setEditForm]  = useState(null);
 
   useEffect(() => {
     if (!authed) return;
@@ -174,8 +176,54 @@ export default function AdminPage() {
   }
 
   async function del(id) {
+    if (editId === id) { setEditId(null); setEditForm(null); }
     const u = guests.filter(g => g.id !== id);
     setGuests(u); await saveG(u);
+  }
+
+  function startEdit(g) {
+    const seats = getSeats(g);
+    setEditId(g.id);
+    setEditForm({
+      name: g.name, phone: g.phone || "",
+      count: seats.length, seats: seats.map(String),
+      guestType: g.guestType, direction: g.direction,
+    });
+  }
+
+  function handleEditCount(n) {
+    setEditForm(f => ({
+      ...f, count: n,
+      seats: Array.from({ length: n }, (_, i) => f.seats[i] ?? ""),
+    }));
+  }
+
+  function updateEditSeat(i, val) {
+    setEditForm(f => {
+      const seats = [...f.seats]; seats[i] = val.replace(/\D/g, "").slice(0, 2);
+      return { ...f, seats };
+    });
+  }
+
+  async function saveEdit() {
+    if (!editForm.name.trim()) return setFormErr("이름을 입력해주세요.");
+    if (!validatePhone(editForm.phone)) return setFormErr("전화번호 형식이 올바르지 않습니다.");
+    const seatNums = editForm.seats.map(Number);
+    if (seatNums.some(s => !s || isNaN(s) || s < 1 || s > 28))
+      return setFormErr("올바른 좌석 번호를 입력해주세요. (1~28)");
+    if (new Set(seatNums).size !== seatNums.length)
+      return setFormErr("중복된 좌석 번호가 있습니다.");
+    const otherSeats = guests.filter(g => g.id !== editId).flatMap(getSeats);
+    const conflict = seatNums.find(s => otherSeats.includes(s));
+    if (conflict) return setFormErr(`${conflict}번 좌석은 이미 사용 중입니다.`);
+
+    const u = guests.map(g => g.id !== editId ? g : {
+      ...g,
+      name: editForm.name.trim(), phone: editForm.phone.trim(),
+      seats: seatNums, guestType: editForm.guestType, direction: editForm.direction,
+    }).sort((a, b) => getSeats(a)[0] - getSeats(b)[0]);
+    setGuests(u); await saveG(u);
+    setEditId(null); setEditForm(null); setFormErr("");
   }
 
   // ── 스프레드시트 불러오기 ──────────────────────────────────────
@@ -373,6 +421,62 @@ export default function AdminPage() {
               <p style={{ margin: "0 0 10px", fontSize: 12, fontWeight: 600, color: C.textSub }}>현재 등록 · {total}명</p>
               {[...guests].sort((a, b) => getSeats(a)[0] - getSeats(b)[0]).map(g => {
                 const seats = getSeats(g);
+                const isEditing = editId === g.id;
+                if (isEditing && editForm) return (
+                  <div key={g.id} style={{ padding: "10px 0", borderBottom: `1px solid ${C.grayPale}` }}>
+                    {/* 손님 유형 */}
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 5, marginBottom: 8 }}>
+                      {GUEST_TYPES.map(t => (
+                        <button key={t.key} onClick={() => setEditForm(f => ({ ...f, guestType: t.key }))}
+                          style={{ padding: "7px 0", borderRadius: 7, fontSize: 12, fontWeight: 600, cursor: "pointer",
+                            border: `1.5px solid ${editForm.guestType === t.key ? t.color : C.border}`,
+                            background: editForm.guestType === t.key ? t.bg : C.white,
+                            color: editForm.guestType === t.key ? t.color : C.textSub }}>
+                          {t.label}
+                        </button>
+                      ))}
+                    </div>
+                    {/* 방향 */}
+                    <div style={{ display: "flex", gap: 5, marginBottom: 8 }}>
+                      {DIRECTIONS.map(d => (
+                        <button key={d.key} onClick={() => setEditForm(f => ({ ...f, direction: d.key }))}
+                          style={{ flex: 1, padding: "7px 0", borderRadius: 7, fontSize: 12, fontWeight: 600, cursor: "pointer",
+                            border: `1.5px solid ${editForm.direction === d.key ? d.color : C.border}`,
+                            background: editForm.direction === d.key ? d.bg : C.white,
+                            color: editForm.direction === d.key ? d.color : C.textSub }}>
+                          {d.label}
+                        </button>
+                      ))}
+                    </div>
+                    {/* 이름 */}
+                    <input type="text" value={editForm.name} onChange={e => setEditForm(f => ({ ...f, name: e.target.value }))}
+                      placeholder="이름" style={{ width: "100%", padding: "9px 11px", borderRadius: 8, border: `1.5px solid ${C.border}`, fontSize: 14, boxSizing: "border-box", outline: "none", marginBottom: 6 }} />
+                    {/* 전화번호 */}
+                    <input type="tel" value={editForm.phone} onChange={e => setEditForm(f => ({ ...f, phone: formatPhone(e.target.value) }))}
+                      placeholder="010-0000-0000" style={{ width: "100%", padding: "9px 11px", borderRadius: 8, border: `1.5px solid ${C.border}`, fontSize: 14, boxSizing: "border-box", outline: "none", marginBottom: 6 }} />
+                    {/* 인원수 */}
+                    <div style={{ marginBottom: 8 }}>
+                      <p style={{ margin: "0 0 5px", fontSize: 11, fontWeight: 600, color: C.textSub }}>탑승 인원수</p>
+                      <CountStepper value={editForm.count} onChange={handleEditCount} />
+                    </div>
+                    {/* 좌석 */}
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 8 }}>
+                      {editForm.seats.map((s, i) => (
+                        <div key={i} style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                          <span style={{ fontSize: 11, color: C.textSub }}>{i + 1}번째</span>
+                          <input type="number" min={1} max={28} value={s}
+                            onChange={e => updateEditSeat(i, e.target.value)}
+                            style={{ width: 55, padding: "7px 8px", borderRadius: 7, border: `1.5px solid ${C.border}`, fontSize: 14, boxSizing: "border-box", outline: "none", textAlign: "center" }} />
+                        </div>
+                      ))}
+                    </div>
+                    <div style={{ display: "flex", gap: 6 }}>
+                      <button onClick={saveEdit} style={{ flex: 1, padding: 9, background: C.orange, color: "#fff", border: "none", borderRadius: 8, fontSize: 13, fontWeight: 700, cursor: "pointer" }}>저장</button>
+                      <button onClick={() => { setEditId(null); setEditForm(null); setFormErr(""); }}
+                        style={{ flex: 1, padding: 9, background: C.white, color: C.textSub, border: `1px solid ${C.border}`, borderRadius: 8, fontSize: 13, cursor: "pointer" }}>취소</button>
+                    </div>
+                  </div>
+                );
                 return (
                   <div key={g.id} style={{ display: "flex", alignItems: "center", gap: 8, padding: "8px 0", borderBottom: `1px solid ${C.grayPale}` }}>
                     <span style={{ fontSize: 12, fontWeight: 700, color: C.orange, flexShrink: 0, minWidth: 32 }}>
@@ -383,6 +487,10 @@ export default function AdminPage() {
                     </span>
                     <Badge typeKey={g.guestType} lookup={GUEST_TYPES} />
                     <Badge typeKey={g.direction} lookup={DIRECTIONS} />
+                    <button onClick={() => startEdit(g)}
+                      style={{ width: 24, height: 24, borderRadius: 5, border: `1px solid ${C.border}`, background: C.white, cursor: "pointer", fontSize: 11, color: C.textSub, flexShrink: 0 }}>
+                      ✎
+                    </button>
                     <button onClick={() => del(g.id)}
                       style={{ width: 24, height: 24, borderRadius: 5, border: `1px solid ${C.border}`, background: C.white, cursor: "pointer", fontSize: 11, color: C.red, flexShrink: 0 }}>
                       ✕
