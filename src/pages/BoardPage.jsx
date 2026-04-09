@@ -115,8 +115,8 @@ export default function BoardPage() {
 
       {/* ── 최상단 방향 탭 ── */}
       <div style={{
-        display: "flex", gap: 8, padding: "12px 13px 0",
-        background: "#1a1a1a",
+        display: "flex", gap: 8, padding: "12px 13px 16px",
+        background: C.white,
       }}>
         {[
           { key: "상행", label: "↑ 상행", boarded: upBoarded, total: upTotal, pct: upPct },
@@ -126,28 +126,29 @@ export default function BoardPage() {
           const allDone = t > 0 && b === t;
           return (
             <button key={key} onClick={() => { setDirection(key); setSeatMapOpen(false); }} style={{
-              flex: 1, padding: "12px 14px 14px",
-              background: active ? C.orange : "#2e2e2e",
-              border: "none", cursor: "pointer",
-              borderRadius: "10px 10px 0 0",
-              transition: "background 0.15s",
+              flex: 1, padding: "12px 14px",
+              background: C.white,
+              border: `2px solid ${active ? C.orange : C.grayLight}`,
+              cursor: "pointer",
+              borderRadius: 12,
+              transition: "border-color 0.15s",
             }}>
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 6 }}>
-                <span style={{ fontSize: 15, fontWeight: 800, color: active ? "#fff" : "#888", letterSpacing: "0.02em" }}>{label}</span>
+                <span style={{ fontSize: 15, fontWeight: 800, color: active ? C.orange : C.textSub, letterSpacing: "0.02em" }}>{label}</span>
                 <span style={{
                   fontSize: 12, fontWeight: 700,
-                  color: active ? (allDone ? "#5DCAA5" : "rgba(255,255,255,0.9)") : "#666",
-                  background: active ? "rgba(0,0,0,0.15)" : "rgba(255,255,255,0.06)",
+                  color: active ? (allDone ? C.teal : C.orange) : C.textSub,
+                  background: active ? C.orangePale : C.grayPale,
                   padding: "2px 8px", borderRadius: 99,
                 }}>
                   {allDone ? "완료 ✓" : `${b} / ${t}`}
                 </span>
               </div>
               {t > 0 && (
-                <div style={{ height: 5, background: active ? "rgba(255,255,255,0.25)" : "rgba(255,255,255,0.08)", borderRadius: 99, overflow: "hidden" }}>
+                <div style={{ height: 5, background: C.grayPale, borderRadius: 99, overflow: "hidden" }}>
                   <div style={{
                     height: "100%", borderRadius: 99,
-                    background: allDone ? "#5DCAA5" : (active ? "#fff" : "#555"),
+                    background: allDone ? C.teal : (active ? C.orange : C.grayLight),
                     width: `${p}%`, transition: "width 0.45s cubic-bezier(.4,0,.2,1)",
                   }} />
                 </div>
@@ -157,8 +158,7 @@ export default function BoardPage() {
         })}
       </div>
 
-      {/* 탭~헤더 연결 배경 */}
-      <div style={{ background: "#1a1a1a", padding: "0 13px 14px" }}>
+      <div style={{ padding: "0 13px 14px" }}>
         <div style={{ background: C.orange, borderRadius: 16, padding: "16px 20px" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
             <div>
