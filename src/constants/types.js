@@ -1,5 +1,5 @@
 export const GUEST_TYPES = [
-  { key: "민형측",   label: "민형측 하객",   color: "#D95B0A", bg: "#FEF0E6" },
+  { key: "민형측",   label: "신부측 하객",   color: "#D95B0A", bg: "#FEF0E6" },
   { key: "엄마측",   label: "엄마측 하객",   color: "#B5386A", bg: "#FDECF3" },
   { key: "아빠측",   label: "아빠측 하객",   color: "#1B5FA8", bg: "#E8F1FC" },
   { key: "부모님측", label: "부모님측 하객", color: "#8B6014", bg: "#FEF3E2" },
