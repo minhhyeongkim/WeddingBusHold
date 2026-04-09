@@ -10,30 +10,30 @@
   <style>
     /* ── 1. CSS 변수 ──────────────────────────────────────────────── */
     :root {
-      --cream:         #faf7f2;
-      --warm-white:    #fffdf9;
-      --gold:          #c9a96e;
-      --gold-light:    #e8d5b0;
-      --gold-dark:     #9b7a42;
-      --charcoal:      #2c2c2c;
-      --gray-mid:      #6b6b6b;
-      --gray-light:    #ebebeb;
+      --cream:         #ffffff;
+      --warm-white:    #f7f8fa;
+      --gold:          #b8944a;
+      --gold-light:    #e8e0d0;
+      --gold-dark:     #8a6830;
+      --charcoal:      #1a1a1a;
+      --gray-mid:      #5a6070;
+      --gray-light:    #e4e6ea;
 
-      --bride-bg:      #fdf2f4;
-      --bride-accent:  #c0607a;
-      --bride-border:  #e8b4c0;
+      --bride-bg:      #fdf0f3;
+      --bride-accent:  #b0485e;
+      --bride-border:  #e0a8b8;
 
-      --groom-bg:      #f2f6fd;
-      --groom-accent:  #3d6fa8;
-      --groom-border:  #b4c8e8;
+      --groom-bg:      #eef4fc;
+      --groom-accent:  #2d5f9a;
+      --groom-border:  #a8c4e4;
 
-      --warn-bg:       #fff8ec;
-      --warn-border:   #f0c87a;
-      --warn-text:     #8b5e1a;
+      --warn-bg:       #fffbf0;
+      --warn-border:   #e8c060;
+      --warn-text:     #7a5010;
 
-      --danger-bg:     #fff2f2;
-      --danger-border: #e8a0a0;
-      --danger-text:   #9b2222;
+      --danger-bg:     #fff4f4;
+      --danger-border: #e09090;
+      --danger-text:   #8a1c1c;
     }
 
     /* ── 2. 리셋 & 기본 ──────────────────────────────────────────── */
@@ -41,9 +41,9 @@
 
     body {
       font-family: 'Noto Sans KR', sans-serif;
-      font-weight: 300;
-      font-size: 14px;
-      line-height: 1.7;
+      font-weight: 400;
+      font-size: 15px;
+      line-height: 1.75;
       color: var(--charcoal);
       background: var(--cream);
     }
@@ -52,7 +52,7 @@
     .container {
       max-width: 640px;
       margin: 0 auto;
-      padding: 0 16px 48px;
+      padding: 0 16px 56px;
     }
 
     /* ── 4. 헤더 (sticky) ────────────────────────────────────────── */
@@ -60,7 +60,7 @@
       position: sticky;
       top: 0;
       z-index: 100;
-      background: var(--warm-white);
+      background: var(--cream);
       border-bottom: 1px solid var(--gold-light);
       padding: 16px 16px 0;
     }
@@ -74,33 +74,34 @@
       letter-spacing: 3px;
       color: var(--gold);
       text-transform: lowercase;
-      margin-bottom: 2px;
+      margin-bottom: 3px;
     }
     .site-header h1 {
       font-family: 'Noto Serif KR', serif;
       font-weight: 600;
-      font-size: 20px;
+      font-size: 22px;
       color: var(--charcoal);
       margin-bottom: 2px;
+      letter-spacing: -0.3px;
     }
     .header-sub {
-      font-size: 12px;
+      font-size: 13px;
       color: var(--gray-mid);
-      font-weight: 300;
-      margin-bottom: 12px;
+      font-weight: 400;
+      margin-bottom: 14px;
     }
 
     /* 역할 탭 버튼 */
     .role-tabs {
       display: flex;
-      gap: 6px;
+      gap: 0;
       padding-bottom: 0;
     }
     .role-btn {
       flex: 1;
-      padding: 9px 4px;
+      padding: 10px 4px;
       font-family: 'Noto Sans KR', sans-serif;
-      font-size: 13px;
+      font-size: 14px;
       font-weight: 500;
       color: var(--gray-mid);
       background: transparent;
@@ -148,15 +149,15 @@
       align-items: center;
       gap: 8px;
       font-family: 'Noto Serif KR', serif;
-      font-size: 15px;
+      font-size: 16px;
       font-weight: 600;
       color: var(--charcoal);
       padding-bottom: 10px;
       border-bottom: 1px solid var(--gold-light);
-      margin: 24px 0 14px;
+      margin: 28px 0 14px;
     }
     .dot {
-      width: 6px; height: 6px;
+      width: 7px; height: 7px;
       border-radius: 50%;
       flex-shrink: 0;
     }
@@ -170,90 +171,92 @@
     .info-card {
       background: var(--warm-white);
       border: 1px solid var(--gray-light);
-      border-radius: 10px;
-      padding: 14px 16px;
+      border-radius: 12px;
+      padding: 16px 18px;
       margin-bottom: 10px;
     }
     .ic-title {
-      font-size: 13px;
-      font-weight: 500;
+      font-size: 14px;
+      font-weight: 600;
       color: var(--charcoal);
-      margin-bottom: 5px;
+      margin-bottom: 6px;
     }
     .ic-body {
-      font-size: 13px;
-      font-weight: 300;
+      font-size: 14px;
+      font-weight: 400;
       color: var(--charcoal);
-      line-height: 1.7;
+      line-height: 1.75;
     }
 
     /* warn-card */
     .warn-card {
       background: var(--warn-bg);
       border: 1px solid var(--warn-border);
-      border-radius: 10px;
-      padding: 14px 16px;
+      border-radius: 12px;
+      padding: 16px 18px;
       margin-bottom: 10px;
     }
     .wc-label {
       font-size: 11px;
       font-weight: 700;
       color: var(--warn-text);
-      letter-spacing: 0.04em;
-      margin-bottom: 3px;
+      letter-spacing: 0.06em;
+      margin-bottom: 4px;
+      text-transform: uppercase;
     }
     .wc-title {
-      font-size: 13px;
-      font-weight: 500;
+      font-size: 14px;
+      font-weight: 600;
       color: var(--warn-text);
       margin-bottom: 5px;
     }
     .wc-body {
-      font-size: 13px;
-      font-weight: 300;
+      font-size: 14px;
+      font-weight: 400;
       color: var(--warn-text);
-      line-height: 1.7;
+      line-height: 1.75;
     }
 
     /* danger-card */
     .danger-card {
       background: var(--danger-bg);
-      border: 1px solid var(--danger-border);
-      border-radius: 10px;
-      padding: 14px 16px;
+      border: 1.5px solid var(--danger-border);
+      border-radius: 12px;
+      padding: 16px 18px;
       margin-bottom: 10px;
     }
     .dc-label {
       font-size: 11px;
       font-weight: 700;
       color: var(--danger-text);
-      letter-spacing: 0.04em;
-      margin-bottom: 3px;
+      letter-spacing: 0.06em;
+      margin-bottom: 4px;
+      text-transform: uppercase;
     }
     .dc-title {
-      font-size: 13px;
-      font-weight: 500;
+      font-size: 14px;
+      font-weight: 700;
       color: var(--danger-text);
       margin-bottom: 5px;
     }
     .dc-body {
-      font-size: 13px;
-      font-weight: 300;
+      font-size: 14px;
+      font-weight: 400;
       color: var(--danger-text);
-      line-height: 1.7;
+      line-height: 1.75;
     }
 
     /* highlight */
     .highlight {
       border-left: 3px solid var(--gold);
       background: var(--warm-white);
-      padding: 10px 14px;
-      font-size: 13px;
+      padding: 12px 16px;
+      font-size: 14px;
       font-weight: 400;
       color: var(--charcoal);
-      border-radius: 0 8px 8px 0;
+      border-radius: 0 10px 10px 0;
       margin-bottom: 10px;
-      line-height: 1.7;
+      line-height: 1.75;
     }
 
     /* steps */
@@ -261,52 +264,52 @@
       list-style: none;
       display: flex;
       flex-direction: column;
-      gap: 10px;
-      margin-bottom: 12px;
+      gap: 12px;
+      margin-bottom: 14px;
     }
     .steps li {
       display: flex;
       align-items: flex-start;
-      gap: 12px;
+      gap: 14px;
     }
     .step-num {
-      width: 24px; height: 24px;
+      width: 26px; height: 26px;
       border-radius: 50%;
       display: flex; align-items: center; justify-content: center;
-      font-size: 12px; font-weight: 700;
+      font-size: 13px; font-weight: 700;
       flex-shrink: 0; margin-top: 1px;
     }
     .num-bride {
       background: var(--bride-bg);
       color: var(--bride-accent);
-      border: 1px solid var(--bride-border);
+      border: 1.5px solid var(--bride-border);
     }
     .num-groom {
       background: var(--groom-bg);
       color: var(--groom-accent);
-      border: 1px solid var(--groom-border);
+      border: 1.5px solid var(--groom-border);
     }
     .step-text {
-      font-size: 13px;
-      font-weight: 300;
+      font-size: 14px;
+      font-weight: 400;
       color: var(--charcoal);
-      line-height: 1.7;
+      line-height: 1.75;
     }
     .step-note {
-      font-size: 12px;
+      font-size: 13px;
       color: var(--gray-mid);
-      margin-top: 2px;
+      margin-top: 3px;
     }
 
     /* example */
     .example {
       display: inline-block;
-      font-size: 12px;
+      font-size: 13px;
       font-weight: 400;
       color: var(--gray-mid);
       background: var(--gray-light);
-      border-radius: 5px;
-      padding: 2px 8px;
+      border-radius: 6px;
+      padding: 3px 10px;
       margin-top: 4px;
     }
 
@@ -314,18 +317,18 @@
     .supplies {
       display: flex;
       flex-wrap: wrap;
-      gap: 6px;
+      gap: 7px;
       margin-bottom: 10px;
     }
     .supply-tag {
       display: inline-block;
-      font-size: 12px;
+      font-size: 13px;
       font-weight: 500;
       color: var(--charcoal);
       background: var(--warm-white);
       border: 1px solid var(--gray-light);
       border-radius: 99px;
-      padding: 4px 12px;
+      padding: 5px 14px;
     }
 
     /* ticket-row */
@@ -333,21 +336,21 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 6px 0;
+      padding: 8px 0;
       border-bottom: 1px solid var(--gray-light);
-      font-size: 13px;
+      font-size: 14px;
     }
     .ticket-row:last-child { border-bottom: none; }
     .ticket-label { font-weight: 400; color: var(--gray-mid); }
-    .ticket-val   { font-weight: 500; color: var(--charcoal); }
+    .ticket-val   { font-weight: 600; color: var(--charcoal); }
 
     /* badge */
     .badge {
       display: inline-block;
       font-size: 11px;
-      font-weight: 500;
+      font-weight: 600;
       border-radius: 99px;
-      padding: 1px 7px;
+      padding: 2px 8px;
       margin: 0 2px;
       vertical-align: middle;
     }
@@ -366,7 +369,7 @@
     .grid2 {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 8px;
+      gap: 10px;
       margin-bottom: 10px;
     }
     .grid2 .info-card { margin-bottom: 0; }
@@ -379,47 +382,51 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 12px 16px;
+      padding: 14px 18px;
       background: var(--warm-white);
       border: 1px solid var(--gray-light);
-      border-radius: 10px;
+      border-radius: 12px;
       margin-bottom: 4px;
-      font-size: 13px;
+      font-size: 14px;
       font-weight: 500;
       color: var(--charcoal);
       cursor: pointer;
       user-select: none;
-      transition: background 0.15s;
+      transition: background 0.15s, border-color 0.15s;
     }
-    .collapse-btn:hover { background: var(--groom-bg); }
+    .collapse-btn:hover {
+      background: var(--groom-bg);
+      border-color: var(--groom-border);
+    }
     .collapse-btn .arrow {
       font-size: 11px;
       color: var(--gray-mid);
       transition: transform 0.22s;
       flex-shrink: 0;
+      margin-left: 10px;
     }
     .collapse-btn.open .arrow { transform: rotate(180deg); }
 
     .collapse-body {
       display: none;
-      padding: 2px 0 8px;
+      padding: 4px 0 8px;
     }
     .collapse-body.open { display: block; }
 
     /* collapse 그룹 간격 */
-    .collapse-group { margin-bottom: 6px; }
+    .collapse-group { margin-bottom: 8px; }
 
     /* intro */
     .intro-box {
       text-align: center;
-      padding: 56px 24px;
+      padding: 64px 24px;
       color: var(--gray-mid);
     }
-    .intro-box .intro-icon { font-size: 36px; margin-bottom: 14px; }
-    .intro-box p { font-size: 14px; font-weight: 300; line-height: 1.8; }
+    .intro-box .intro-icon { font-size: 40px; margin-bottom: 16px; }
+    .intro-box p { font-size: 15px; font-weight: 400; line-height: 1.85; color: var(--gray-mid); }
 
     /* 패널 내 첫 section-title 상단 마진 조정 */
-    .panel > .section-title:first-child { margin-top: 20px; }
+    .panel > .section-title:first-child { margin-top: 22px; }
   </style>
 </head>
 <body>
