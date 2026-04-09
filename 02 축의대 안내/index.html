@@ -942,7 +942,11 @@ function renderInputListView() {
 
   const selCls = role === 'bride' ? 'sel-bride' : 'sel-groom';
 
-  listEl.innerHTML = [...filtered].sort((a, b) => (a.ledger_no ?? Infinity) - (b.ledger_no ?? Infinity)).map(e => {
+  listEl.innerHTML = [...filtered].sort((a, b) => {
+    const an = a.ledger_no != null ? Number(a.ledger_no) : Infinity;
+    const bn = b.ledger_no != null ? Number(b.ledger_no) : Infinity;
+    return an - bn;
+  }).map(e => {
     if (e.id === editingId) return renderEditForm(e, selCls);
 
     return `
