@@ -82,9 +82,13 @@ export default function BoardPage() {
   const waiting = dirGuests.filter(g => !g.boarded).sort((a, b) => firstSeat(a) - firstSeat(b));
   const done    = dirGuests.filter(g =>  g.boarded).sort((a, b) => firstSeat(a) - firstSeat(b));
 
-  const boardedSeats = done.flatMap(getSeats);
-  const guestSeatMap = {};
-  [...waiting, ...done].forEach(g => getSeats(g).forEach(s => { guestSeatMap[s] = g.name; }));
+  const boardedSeats  = done.flatMap(getSeats);
+  const guestSeatMap  = {};
+  const seatToGuestId = {};
+  [...waiting, ...done].forEach(g => getSeats(g).forEach(s => {
+    guestSeatMap[s]  = g.name;
+    seatToGuestId[s] = g.id;
+  }));
 
   // ── 출발 준비 완료 ─────────────────────────────────────────────────
   if (justDone) return (
@@ -214,9 +218,10 @@ export default function BoardPage() {
           <div style={{ marginBottom: 16 }}>
             <BusSeatMap
               direction={direction}
-              onDirectionChange={setDirection}
               boardedSeats={boardedSeats}
               guestSeatMap={guestSeatMap}
+              seatToGuestId={seatToGuestId}
+              onBoard={board}
             />
           </div>
         )}
