@@ -5,9 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>결혼식 안내 — 혼주 가족 가이드</title>
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%23b8944a'/><text x='16' y='23' text-anchor='middle' font-size='18' fill='white' font-family='system-ui'>💍</text></svg>">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&family=Noto+Serif+KR:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
   <style>
     /* ── CSS 변수 ── */
     :root {
@@ -26,8 +24,6 @@
       --danger-bg:    #fff3f3;
       --danger-border:#e89090;
       --danger-text:  #8a1c1c;
-      --success-bg:   #f0faf5;
-      --success-text: #1a6640;
       --timeline-done:#b8944a;
       --timeline-now: #c0607a;
       --timeline-todo:#c8cdd6;
@@ -36,53 +32,19 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      font-family: 'Noto Sans KR', sans-serif;
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
       font-size: 16px;
       line-height: 1.7;
       color: var(--charcoal);
       background: var(--ivory);
-      padding-bottom: 48px;
-    }
-
-    /* ── 상단 고정 네비 ── */
-    .top-nav {
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      background: var(--warm-white);
-      border-bottom: 1px solid var(--gold-light);
-      padding: 0 12px;
-      display: flex;
-      gap: 4px;
-      overflow-x: auto;
-      scrollbar-width: none;
-    }
-    .top-nav::-webkit-scrollbar { display: none; }
-    .nav-btn {
-      flex-shrink: 0;
-      padding: 12px 14px;
-      font-size: 14px;
-      font-family: 'Noto Sans KR', sans-serif;
-      font-weight: 500;
-      color: var(--gray-mid);
-      background: none;
-      border: none;
-      border-bottom: 2.5px solid transparent;
-      cursor: pointer;
-      white-space: nowrap;
-      transition: color 0.15s, border-color 0.15s;
-      min-height: 44px;
-    }
-    .nav-btn.active, .nav-btn:hover {
-      color: var(--gold);
-      border-bottom-color: var(--gold);
+      padding-bottom: 56px;
     }
 
     /* ── 헤더 ── */
     .site-header {
       background: linear-gradient(135deg, #fdf6e8 0%, #faf0ec 100%);
       border-bottom: 1px solid var(--gold-light);
-      padding: 32px 20px 28px;
+      padding: 32px 20px 0;
       text-align: center;
     }
     .header-label {
@@ -94,20 +56,19 @@
       margin-bottom: 10px;
     }
     .header-title {
-      font-family: 'Noto Serif KR', serif;
-      font-size: 26px;
-      font-weight: 600;
+      font-size: 24px;
+      font-weight: 700;
       color: var(--charcoal);
-      letter-spacing: -0.3px;
-      margin-bottom: 8px;
+      letter-spacing: -0.5px;
+      margin-bottom: 6px;
     }
     .header-date {
-      font-size: 15px;
+      font-size: 14px;
       color: var(--gray-mid);
+      margin-bottom: 14px;
     }
     .header-badge {
       display: inline-block;
-      margin-top: 14px;
       background: var(--rose-pale);
       border: 1px solid var(--rose-border);
       color: var(--rose);
@@ -115,6 +76,40 @@
       font-weight: 700;
       padding: 5px 16px;
       border-radius: 99px;
+      margin-bottom: 20px;
+    }
+
+    /* ── 섹션 토글 네비 (헤더 하단) ── */
+    .section-nav {
+      display: flex;
+      gap: 8px;
+      padding: 0 0 16px;
+      justify-content: center;
+    }
+    .snav-btn {
+      flex: 1;
+      max-width: 160px;
+      padding: 10px 8px;
+      border-radius: 10px;
+      border: 1.5px solid var(--gold-light);
+      background: var(--warm-white);
+      color: var(--gray-mid);
+      font-family: 'Pretendard', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.15s;
+      min-height: 44px;
+      line-height: 1.3;
+    }
+    .snav-btn:active {
+      transform: scale(0.97);
+    }
+    .snav-btn.active {
+      border-color: var(--gold);
+      background: var(--gold-pale);
+      color: var(--gold);
     }
 
     /* ── 컨테이너 ── */
@@ -126,23 +121,33 @@
 
     /* ── 섹션 공통 ── */
     .section {
-      padding: 28px 0 8px;
+      display: none;
+      padding: 24px 0 8px;
+      animation: fadeUp 0.25s ease both;
     }
+    .section.active { display: block; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
     .section-header {
       display: flex;
       align-items: center;
       gap: 10px;
       margin-bottom: 18px;
     }
-    .section-icon {
-      font-size: 22px;
-      line-height: 1;
-    }
+    .section-icon { font-size: 20px; line-height: 1; }
     .section-title {
-      font-family: 'Noto Serif KR', serif;
       font-size: 18px;
-      font-weight: 600;
+      font-weight: 700;
       color: var(--charcoal);
+    }
+    .divider {
+      height: 1px;
+      background: var(--gold-light);
+      margin: 0 0 20px;
     }
 
     /* ── 타임라인 ── */
@@ -161,56 +166,59 @@
     }
     .tl-item {
       position: relative;
-      padding: 0 0 20px 20px;
+      padding: 0 0 16px 20px;
     }
     .tl-item:last-child { padding-bottom: 0; }
     .tl-dot {
       position: absolute;
       left: -17px;
-      top: 6px;
+      top: 7px;
       width: 16px;
       height: 16px;
       border-radius: 50%;
       background: var(--timeline-todo);
       border: 3px solid var(--ivory);
-      transition: background 0.3s;
       z-index: 1;
+      transition: background 0.3s;
     }
     .tl-item.done .tl-dot   { background: var(--timeline-done); }
     .tl-item.current .tl-dot {
       background: var(--timeline-now);
-      box-shadow: 0 0 0 4px rgba(192, 96, 122, 0.2);
+      box-shadow: 0 0 0 4px rgba(192,96,122,0.2);
     }
     .tl-card {
       background: var(--warm-white);
       border: 1.5px solid var(--gray-light);
       border-radius: 12px;
-      padding: 12px 14px;
-      transition: border-color 0.3s;
+      padding: 11px 14px;
+      transition: border-color 0.3s, background 0.3s;
     }
-    .tl-item.done .tl-card   { background: var(--gray-pale); border-color: var(--gray-light); }
+    .tl-item.done .tl-card {
+      background: var(--gray-pale);
+      border-color: var(--gray-light);
+    }
     .tl-item.current .tl-card {
       border-color: var(--rose-border);
       background: var(--rose-pale);
     }
     .tl-time {
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 700;
       color: var(--gold);
       margin-bottom: 2px;
     }
-    .tl-item.done .tl-time  { color: var(--gray-mid); }
+    .tl-item.done .tl-time    { color: var(--gray-mid); }
     .tl-item.current .tl-time { color: var(--rose); }
     .tl-label {
       font-size: 15px;
       font-weight: 600;
       color: var(--charcoal);
-      margin-bottom: 2px;
     }
     .tl-item.done .tl-label { color: var(--gray-mid); }
     .tl-who {
       font-size: 13px;
       color: var(--gray-mid);
+      margin-top: 1px;
     }
     .tl-now-badge {
       display: inline-block;
@@ -222,10 +230,9 @@
       padding: 1px 7px;
       border-radius: 99px;
       vertical-align: middle;
-      letter-spacing: 0.5px;
     }
 
-    /* ── 카드 공통 ── */
+    /* ── 카드 ── */
     .card {
       background: var(--warm-white);
       border: 1.5px solid var(--gray-light);
@@ -237,7 +244,7 @@
       font-size: 14px;
       font-weight: 700;
       color: var(--charcoal);
-      margin-bottom: 8px;
+      margin-bottom: 12px;
     }
 
     /* ── 경고 박스 ── */
@@ -252,8 +259,8 @@
       font-size: 12px;
       font-weight: 700;
       color: var(--danger-text);
-      letter-spacing: 0.5px;
-      margin-bottom: 6px;
+      letter-spacing: 0.3px;
+      margin-bottom: 8px;
     }
     .danger-item {
       display: flex;
@@ -262,18 +269,19 @@
       font-size: 15px;
       color: var(--danger-text);
       padding: 3px 0;
+      line-height: 1.55;
     }
     .danger-item::before {
       content: '✕';
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 700;
       color: var(--danger-text);
       flex-shrink: 0;
-      margin-top: 3px;
-      background: rgba(138,28,28,0.12);
+      margin-top: 2px;
       width: 20px;
       height: 20px;
       border-radius: 50%;
+      background: rgba(138,28,28,0.1);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -291,118 +299,21 @@
       font-size: 12px;
       font-weight: 700;
       color: var(--gold);
-      letter-spacing: 0.5px;
-      margin-bottom: 6px;
+      letter-spacing: 0.3px;
+      margin-bottom: 8px;
     }
 
-    /* ── 체크리스트 ── */
-    .checklist { list-style: none; }
-    .checklist li {
-      display: flex;
-      align-items: flex-start;
-      gap: 12px;
-      padding: 10px 0;
-      border-bottom: 1px solid var(--gray-light);
-      cursor: pointer;
-      transition: opacity 0.2s;
-    }
-    .checklist li:last-child { border-bottom: none; }
-    .checklist li.checked { opacity: 0.5; }
-
-    .check-box {
-      flex-shrink: 0;
-      width: 24px;
-      height: 24px;
-      border-radius: 6px;
-      border: 2px solid var(--gray-light);
-      background: var(--warm-white);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-top: 1px;
-      transition: all 0.15s;
-    }
-    .checked .check-box {
-      background: var(--success-bg);
-      border-color: #4caf82;
-    }
-    .check-box::after {
-      content: '';
-      display: none;
-    }
-    .checked .check-box::after {
-      content: '✓';
-      display: block;
-      font-size: 14px;
-      font-weight: 700;
-      color: #4caf82;
-      line-height: 1;
-    }
-    .check-text {
-      font-size: 15px;
-      color: var(--charcoal);
-      flex: 1;
-      line-height: 1.6;
-    }
-    .checked .check-text {
-      text-decoration: line-through;
-      color: var(--gray-mid);
-    }
-    .check-tag {
-      display: inline-block;
-      font-size: 11px;
-      font-weight: 700;
-      padding: 1px 7px;
-      border-radius: 99px;
-      margin-right: 4px;
-    }
-    .tag-warn  { background: var(--danger-bg);  color: var(--danger-text); }
-    .tag-note  { background: var(--gold-pale);  color: var(--gold); }
-
-    /* ── 안내 목록 ── */
-    .info-list { list-style: none; }
-    .info-list li {
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
-      padding: 10px 0;
-      border-bottom: 1px solid var(--gray-light);
-      font-size: 15px;
-      line-height: 1.65;
-    }
-    .info-list li:last-child { border-bottom: none; }
-    .info-list .il-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
-    .info-list strong { font-weight: 700; color: var(--charcoal); }
-
-    /* ── 메이크업 위치 카드 ── */
-    .location-steps {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      margin-top: 8px;
-    }
-    .loc-step {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 14px;
-    }
+    /* ── 위치 안내 단계 ── */
+    .location-steps { display: flex; flex-direction: column; gap: 8px; }
+    .loc-step { display: flex; align-items: center; gap: 10px; font-size: 15px; }
     .loc-num {
       flex-shrink: 0;
-      width: 24px;
-      height: 24px;
+      width: 24px; height: 24px;
       border-radius: 50%;
       background: var(--gold);
       color: #fff;
-      font-size: 12px;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .loc-arrow {
-      color: var(--gold-light);
-      font-size: 12px;
+      font-size: 12px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
     }
 
     /* ── 추가금 배지 ── */
@@ -413,17 +324,14 @@
       background: var(--rose-pale);
       border: 1px solid var(--rose-border);
       color: var(--rose);
-      font-size: 13px;
-      font-weight: 700;
-      padding: 4px 12px;
+      font-size: 13px; font-weight: 700;
+      padding: 5px 14px;
       border-radius: 99px;
-      margin-top: 8px;
+      margin-top: 10px;
     }
 
-    /* ── 진행바 (체크리스트) ── */
-    .progress-wrap {
-      margin-bottom: 16px;
-    }
+    /* ── 체크리스트 ── */
+    .progress-wrap { margin-bottom: 14px; }
     .progress-header {
       display: flex;
       justify-content: space-between;
@@ -444,6 +352,72 @@
       transition: width 0.4s cubic-bezier(.4,0,.2,1);
     }
 
+    .checklist { list-style: none; }
+    .checklist li {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 11px 0;
+      border-bottom: 1px solid var(--gray-light);
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      transition: opacity 0.2s;
+    }
+    .checklist li:last-child { border-bottom: none; }
+    .checklist li.checked { opacity: 0.45; }
+
+    .check-box {
+      flex-shrink: 0;
+      width: 24px; height: 24px;
+      border-radius: 6px;
+      border: 2px solid var(--gray-light);
+      background: var(--warm-white);
+      display: flex; align-items: center; justify-content: center;
+      margin-top: 1px;
+      transition: all 0.15s;
+      font-size: 13px; font-weight: 700; color: transparent;
+    }
+    .checked .check-box {
+      background: #e8f7ef;
+      border-color: #4caf82;
+      color: #4caf82;
+    }
+    .check-text {
+      font-size: 15px;
+      color: var(--charcoal);
+      flex: 1;
+      line-height: 1.6;
+    }
+    .checked .check-text {
+      text-decoration: line-through;
+      color: var(--gray-mid);
+    }
+    .check-tag {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 1px 7px;
+      border-radius: 99px;
+      margin-left: 4px;
+    }
+    .tag-warn { background: var(--danger-bg); color: var(--danger-text); }
+    .tag-note { background: var(--gold-pale); color: var(--gold); }
+
+    /* ── 안내 목록 ── */
+    .info-list { list-style: none; }
+    .info-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 11px 0;
+      border-bottom: 1px solid var(--gray-light);
+      font-size: 15px;
+      line-height: 1.65;
+    }
+    .info-list li:last-child { border-bottom: none; }
+    .info-list .il-icon { font-size: 18px; flex-shrink: 0; margin-top: 2px; }
+    .info-list strong { font-weight: 700; }
+
     /* ── 아코디언 ── */
     .accordion {
       background: var(--warm-white);
@@ -461,12 +435,13 @@
       background: none;
       border: none;
       cursor: pointer;
-      font-family: 'Noto Sans KR', sans-serif;
+      font-family: 'Pretendard', sans-serif;
       font-size: 15px;
       font-weight: 600;
       color: var(--charcoal);
       text-align: left;
       min-height: 44px;
+      -webkit-tap-highlight-color: transparent;
     }
     .accordion-arrow {
       font-size: 12px;
@@ -480,17 +455,9 @@
       padding: 0 16px 14px;
       font-size: 15px;
       line-height: 1.7;
-      color: var(--charcoal);
       border-top: 1px solid var(--gray-light);
     }
     .accordion.open .accordion-body { display: block; }
-
-    /* ── 구분선 ── */
-    .divider {
-      height: 1px;
-      background: var(--gold-light);
-      margin: 4px 0 20px;
-    }
 
     /* ── 푸터 ── */
     footer {
@@ -501,24 +468,9 @@
       color: var(--gray-mid);
       border-top: 1px solid var(--gold-light);
     }
-    footer .footer-heart { color: var(--rose); }
-
-    /* ── 스크롤 애니메이션 ── */
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(10px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-    .section { animation: fadeUp 0.4s ease both; }
   </style>
 </head>
 <body>
-
-<!-- ── 상단 네비 ── -->
-<nav class="top-nav" id="top-nav">
-  <button class="nav-btn active" onclick="scrollTo('timeline')">📅 일정</button>
-  <button class="nav-btn" onclick="scrollTo('makeup')">💄 메이크업</button>
-  <button class="nav-btn" onclick="scrollTo('venue')">🏛 식장 안내</button>
-</nav>
 
 <!-- ── 헤더 ── -->
 <header class="site-header">
@@ -526,6 +478,13 @@
   <div class="header-title">혼주 가족 결혼식 안내</div>
   <div class="header-date">2026년 4월 12일 토요일 · 아벤티움 웨딩홀</div>
   <div class="header-badge">💍 김민형 · 12:30 예식</div>
+
+  <!-- 섹션 토글 네비 -->
+  <div class="section-nav">
+    <button class="snav-btn active" id="btn-timeline" onclick="showSection('timeline')">📅<br>일정</button>
+    <button class="snav-btn" id="btn-makeup"   onclick="showSection('makeup')">💄<br>메이크업</button>
+    <button class="snav-btn" id="btn-venue"    onclick="showSection('venue')">🏛<br>식장 안내</button>
+  </div>
 </header>
 
 <div class="container">
@@ -533,7 +492,7 @@
   <!-- ══════════════════════════════════
        섹션 1 — 전체 일정 타임라인
   ══════════════════════════════════ -->
-  <section class="section" id="timeline">
+  <section class="section active" id="timeline">
     <div class="section-header">
       <span class="section-icon">📅</span>
       <h2 class="section-title">전체 일정</h2>
@@ -541,7 +500,6 @@
     <div class="divider"></div>
 
     <div class="timeline" id="tl-container">
-      <!-- JS로 현재 시각 기준 상태 부여 -->
       <div class="tl-item" data-start="0000" data-end="0800">
         <div class="tl-dot"></div>
         <div class="tl-card">
@@ -636,36 +594,27 @@
     <div class="divider"></div>
 
     <!-- 위치 안내 -->
-    <div class="info-box" style="margin-bottom:14px;">
+    <div class="info-box" style="margin-bottom:10px;">
       <div class="box-label">📍 메이크업실 위치</div>
       <div class="location-steps">
-        <div class="loc-step">
-          <div class="loc-num">1</div>
-          <span>웨딩홀 3층으로 이동</span>
-        </div>
-        <div class="loc-step">
-          <div class="loc-num">2</div>
-          <span>입구 <strong>왼쪽 상담실 방향</strong>으로</span>
-        </div>
-        <div class="loc-step">
-          <div class="loc-num">3</div>
-          <span><strong>나무계단</strong>으로 올라가기</span>
-        </div>
+        <div class="loc-step"><div class="loc-num">1</div><span>웨딩홀 3층으로 이동</span></div>
+        <div class="loc-step"><div class="loc-num">2</div><span>입구 <strong>왼쪽 상담실 방향</strong>으로</span></div>
+        <div class="loc-step"><div class="loc-num">3</div><span><strong>나무계단</strong>으로 올라가기</span></div>
       </div>
     </div>
 
     <!-- 금지 사항 -->
     <div class="danger-box">
-      <div class="box-label">🚫 이것은 반드시 하지 마세요</div>
-      <div class="danger-item">영양크림 · 수딩젤 · 선크림 — 수분크림까지만</div>
-      <div class="danger-item">트리트먼트 — 샴푸·린스 후 완전히 말리기만</div>
+      <div class="box-label">🚫 반드시 하지 마세요</div>
+      <div class="danger-item">영양크림 · 수딩젤 · 선크림 (수분크림까지만 가능)</div>
+      <div class="danger-item">트리트먼트 (샴푸·린스 후 완전히 말리기만)</div>
       <div class="danger-item">머리 묶기 · 모자 착용</div>
-      <div class="danger-item">단추 없는 상의 착용 (환복 시 단추 달린 셔츠만, 안에 나시·티 없이)</div>
+      <div class="danger-item">환복 시 단추 없는 상의 — 단추 달린 셔츠만, 안에 나시·티 없이</div>
     </div>
 
     <!-- 체크리스트 -->
     <div class="card" style="margin-top:4px;">
-      <div class="card-title">✅ 메이크업 전날 준비 체크리스트</div>
+      <div class="card-title">✅ 준비 체크리스트</div>
       <div class="progress-wrap">
         <div class="progress-header">
           <span id="check-count">0 / 8 완료</span>
@@ -677,41 +626,41 @@
       </div>
       <ul class="checklist" id="checklist">
         <li data-id="c1" onclick="toggle('c1')">
-          <div class="check-box"></div>
-          <div class="check-text">수분크림까지만 바르기 <span class="check-tag tag-warn">영양·선크림 금지</span></div>
+          <div class="check-box">✓</div>
+          <div class="check-text">수분크림까지만 바르기<span class="check-tag tag-warn">영양·선크림 금지</span></div>
         </li>
         <li data-id="c2" onclick="toggle('c2')">
-          <div class="check-box"></div>
-          <div class="check-text">샴푸 · 린스 후 머리 완전히 말리기 <span class="check-tag tag-warn">트리트먼트 금지</span></div>
+          <div class="check-box">✓</div>
+          <div class="check-text">샴푸·린스 후 머리 완전히 말리기<span class="check-tag tag-warn">트리트먼트 금지</span></div>
         </li>
         <li data-id="c3" onclick="toggle('c3')">
-          <div class="check-box"></div>
+          <div class="check-box">✓</div>
           <div class="check-text">헤어 에센스는 <strong>머리 끝에만</strong> 소량 사용</div>
         </li>
         <li data-id="c4" onclick="toggle('c4')">
-          <div class="check-box"></div>
+          <div class="check-box">✓</div>
           <div class="check-text">머리 묶지 않기 · 모자 쓰지 않기</div>
         </li>
         <li data-id="c5" onclick="toggle('c5')">
-          <div class="check-box"></div>
-          <div class="check-text">환복 필요 시 — <strong>단추 달린 셔츠</strong>만 착용 <span class="check-tag tag-warn">안에 나시·티 없이</span></div>
+          <div class="check-box">✓</div>
+          <div class="check-text">환복 필요 시 — 단추 달린 셔츠만<span class="check-tag tag-warn">안에 나시·티 없이</span></div>
         </li>
         <li data-id="c6" onclick="toggle('c6')">
-          <div class="check-box"></div>
-          <div class="check-text">올림머리 가발 원할 경우 현장 결제 준비 <span class="check-tag tag-note">55,000원</span></div>
+          <div class="check-box">✓</div>
+          <div class="check-text">올림머리 가발 원할 경우 현장 결제 준비<span class="check-tag tag-note">55,000원</span></div>
         </li>
         <li data-id="c7" onclick="toggle('c7')">
-          <div class="check-box"></div>
+          <div class="check-box">✓</div>
           <div class="check-text">당일 08:00 이전 웨딩홀 도착 확인</div>
         </li>
         <li data-id="c8" onclick="toggle('c8')">
-          <div class="check-box"></div>
-          <div class="check-text">의상 확인 · 피팅룸 이용 계획 확인</div>
+          <div class="check-box">✓</div>
+          <div class="check-text">의상 확인 · 피팅룸·락커 이용 계획</div>
         </li>
       </ul>
     </div>
 
-    <!-- 가발 추가금 안내 -->
+    <!-- 가발 추가금 -->
     <div class="accordion">
       <button class="accordion-btn" onclick="toggleAccordion(this)">
         💰 올림머리 가발 추가금 안내
@@ -719,10 +668,9 @@
       </button>
       <div class="accordion-body">
         올림머리용 가발은 당일 현장에서 결제합니다.<br>
-        <div class="price-badge">💳 55,000원 · 현장 카드/현금 결제</div>
+        <div class="price-badge">💳 55,000원 · 현장 카드/현금</div>
       </div>
     </div>
-
   </section>
 
   <!-- ══════════════════════════════════
@@ -738,125 +686,111 @@
     <ul class="info-list">
       <li>
         <span class="il-icon">🕥</span>
-        <div>
-          <strong>신랑신부 도착</strong><br>
-          10:30 예상 (메이크업샵 10:00 아웃)
-        </div>
+        <div><strong>신랑신부 도착</strong><br>10:30 예상 (메이크업샵 10:00 아웃)</div>
       </li>
       <li>
         <span class="il-icon">🛋</span>
-        <div>
-          <strong>혼주 대기실</strong><br>
-          예식 4시간 전부터 사용 가능. 양가 1개 룸 공동 사용 (신랑신부 성함 표기)
-        </div>
+        <div><strong>혼주 대기실</strong><br>예식 4시간 전부터 사용 가능. 양가 1개 룸 공동 사용 (신랑신부 성함 표기)</div>
       </li>
       <li>
         <span class="il-icon">👗</span>
-        <div>
-          <strong>의상 환복</strong><br>
-          피팅룸 이용. <strong>옷 보관은 반드시 락커</strong> — 피팅룸 보관 불가
-        </div>
+        <div><strong>의상 환복</strong><br>피팅룸 이용. <strong>옷 보관은 반드시 락커</strong> — 피팅룸 보관 불가</div>
       </li>
       <li>
         <span class="il-icon">🚗</span>
-        <div>
-          <strong>주차권</strong><br>
-          정산 시 배부. <strong>본관·별관 주차권 상이</strong>하므로 주차 위치 확인 후 수령
-        </div>
+        <div><strong>주차권</strong><br>정산 시 배부. <strong>본관·별관 주차권 상이</strong> — 주차 위치 확인 후 수령</div>
       </li>
       <li>
         <span class="il-icon">💐</span>
-        <div>
-          <strong>화환 수령</strong><br>
-          웨딩홀 직원이 리본만 수거 후 추후 전달
-        </div>
+        <div><strong>화환 수령</strong><br>웨딩홀 직원이 리본만 수거 후 추후 전달</div>
       </li>
       <li>
         <span class="il-icon">✅</span>
-        <div>
-          <strong>메이크업 완료 후</strong><br>
-          혼주 대기실에서 대기
-        </div>
+        <div><strong>메이크업 완료 후</strong><br>혼주 대기실에서 대기</div>
       </li>
     </ul>
 
-    <!-- 주차 주의 강조 -->
-    <div class="danger-box" style="margin-top:8px;">
+    <div class="danger-box" style="margin-top:10px;">
       <div class="box-label">⚠️ 주차 주의</div>
-      <div class="danger-item">본관 · 별관 주차권이 다름 — 내가 주차한 위치 반드시 확인 후 맞는 주차권 수령</div>
+      <div class="danger-item">본관·별관 주차권이 다름 — 내가 주차한 위치 반드시 확인 후 맞는 주차권 수령</div>
     </div>
-
   </section>
 
-</div><!-- /container -->
+</div>
 
 <footer>
-  <div>💍 <span class="footer-heart">♥</span> 김민형 결혼식 · 2026. 04. 12</div>
-  <div style="margin-top:6px;font-size:12px;">아벤티움 웨딩홀 3층 · 12:30 예식</div>
+  <div>💍 김민형 결혼식 · 2026. 04. 12</div>
+  <div style="margin-top:4px;font-size:12px;">아벤티움 웨딩홀 3층 · 12:30 예식</div>
 </footer>
 
 <script>
-// ── 타임라인 현재 시각 하이라이트 ──────────────────────
-function updateTimeline() {
-  const now = new Date();
-  const hhmm = String(now.getHours()).padStart(2,'0') + String(now.getMinutes()).padStart(2,'0');
-  const nowNum = parseInt(hhmm);
+// ── 섹션 전환 ─────────────────────────────────────────────
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.snav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.getElementById('btn-' + id).classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
 
-  const items = document.querySelectorAll('.tl-item');
+// ── 타임라인 현재 시각 하이라이트 ─────────────────────────
+function updateTimeline() {
+  const now    = new Date();
+  const nowNum = now.getHours() * 100 + now.getMinutes();
   let foundCurrent = false;
 
-  items.forEach(item => {
+  document.querySelectorAll('.tl-item').forEach(item => {
     const start = parseInt(item.dataset.start);
     const end   = parseInt(item.dataset.end);
     item.classList.remove('done', 'current');
+
+    // 기존 배지 제거
+    const badge = item.querySelector('.tl-now-badge');
+    if (badge) badge.remove();
 
     if (nowNum >= end) {
       item.classList.add('done');
     } else if (!foundCurrent && nowNum >= start && nowNum < end) {
       item.classList.add('current');
       foundCurrent = true;
-      // 배지 추가
       const labelEl = item.querySelector('.tl-label');
-      if (labelEl && !labelEl.querySelector('.tl-now-badge')) {
-        const badge = document.createElement('span');
-        badge.className = 'tl-now-badge';
-        badge.textContent = '진행 중';
-        labelEl.appendChild(badge);
+      if (labelEl) {
+        const b = document.createElement('span');
+        b.className = 'tl-now-badge';
+        b.textContent = '진행 중';
+        labelEl.appendChild(b);
       }
     }
   });
 }
 
 updateTimeline();
-setInterval(updateTimeline, 60000); // 1분마다 갱신
+setInterval(updateTimeline, 60000);
 
-// ── 체크리스트 로컬스토리지 ──────────────────────────────
+// ── 체크리스트 ───────────────────────────────────────────
 const STORAGE_KEY = 'wedding_checklist_2026';
 
 function loadChecks() {
   try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; }
   catch { return {}; }
 }
-
-function saveChecks(state) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-}
+function saveChecks(s) { localStorage.setItem(STORAGE_KEY, JSON.stringify(s)); }
 
 function toggle(id) {
-  const state = loadChecks();
-  state[id] = !state[id];
-  saveChecks(state);
+  const s = loadChecks();
+  s[id] = !s[id];
+  saveChecks(s);
   renderChecks();
 }
 
 function renderChecks() {
-  const state = loadChecks();
+  const s = loadChecks();
   const items = document.querySelectorAll('#checklist li');
   let done = 0;
   items.forEach(li => {
-    const id = li.dataset.id;
-    if (state[id]) { li.classList.add('checked'); done++; }
-    else            { li.classList.remove('checked'); }
+    const checked = !!s[li.dataset.id];
+    li.classList.toggle('checked', checked);
+    if (checked) done++;
   });
   const total = items.length;
   const pct = Math.round(done / total * 100);
@@ -869,40 +803,8 @@ renderChecks();
 
 // ── 아코디언 ─────────────────────────────────────────────
 function toggleAccordion(btn) {
-  const acc = btn.closest('.accordion');
-  acc.classList.toggle('open');
+  btn.closest('.accordion').classList.toggle('open');
 }
-
-// ── 섹션 스크롤 ──────────────────────────────────────────
-function scrollTo(id) {
-  const el = document.getElementById(id);
-  if (!el) return;
-  const offset = document.getElementById('top-nav').offsetHeight + 8;
-  const top = el.getBoundingClientRect().top + window.scrollY - offset;
-  window.scrollTo({ top, behavior: 'smooth' });
-
-  // 탭 활성화
-  document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
-  const order = ['timeline','makeup','venue'];
-  const idx = order.indexOf(id);
-  document.querySelectorAll('.nav-btn')[idx]?.classList.add('active');
-}
-
-// ── 스크롤 시 탭 자동 활성화 ─────────────────────────────
-const sectionIds = ['timeline', 'makeup', 'venue'];
-function onScroll() {
-  const navH = document.getElementById('top-nav').offsetHeight + 12;
-  let active = 0;
-  sectionIds.forEach((id, i) => {
-    const el = document.getElementById(id);
-    if (el && el.getBoundingClientRect().top <= navH + 10) active = i;
-  });
-  document.querySelectorAll('.nav-btn').forEach((btn, i) => {
-    btn.classList.toggle('active', i === active);
-  });
-}
-window.addEventListener('scroll', onScroll, { passive: true });
 </script>
-
 </body>
 </html>
