@@ -396,6 +396,7 @@
       display: flex; align-items: center;
       gap: 6px; flex-wrap: wrap; margin-bottom: 4px;
     }
+    .entry-ledger { font-size: 11px; font-weight: 600; color: var(--text-sub); background: var(--card); border: 1px solid var(--border); border-radius: 4px; padding: 1px 5px; }
     .entry-name   { font-size: 15px; font-weight: 700; }
     .entry-rel    { font-size: 12px; color: var(--text-sub); }
     .entry-memo   { font-size: 12px; color: var(--text-sub); margin-top: 2px; }
@@ -612,6 +613,10 @@
         <div class="form-group">
           <label>손님 유형</label>
           <div id="guest-type-toggles" class="guest-type-toggles"></div>
+        </div>
+        <div class="form-group">
+          <label>장부 번호 <span style="font-weight:400;font-size:12px;">(선택)</span></label>
+          <input type="number" id="input-ledger-no" placeholder="예) 12" min="1" style="width:120px;" />
         </div>
         <div class="form-group">
           <label>하객 이름</label>
@@ -959,6 +964,7 @@ function renderInputListView() {
         <div class="entry-main">
           <div class="entry-top">
             ${badgeHtml(e.guest_type)}
+            ${e.ledger_no != null ? `<span class="entry-ledger">#${e.ledger_no}</span>` : ''}
             <span class="entry-name">${esc(e.name)}</span>
             <span class="entry-rel">${e.relation}</span>
           </div>
@@ -991,6 +997,8 @@ function renderEditForm(e, selCls) {
     <div class="entry-item editing">
       <div class="edit-wrap">
         <div class="guest-type-toggles" style="margin-bottom:10px;">${togglesHtml}</div>
+        <input class="edit-input" type="number" value="${editDraft.ledger_no}"
+          oninput="editDraft.ledger_no=this.value?Number(this.value):null" placeholder="장부 번호 (선택)" style="width:140px;margin-bottom:8px;" />
         <div class="edit-row">
           <input class="edit-input" type="text" value="${esc(editDraft.name)}"
             oninput="editDraft.name=this.value" placeholder="이름" style="flex:1;" />
@@ -1019,6 +1027,7 @@ function startEdit(id) {
   if (!e) return;
   editingId = id;
   editDraft = {
+    ledger_no:  e.ledger_no != null ? e.ledger_no : '',
     guest_type: e.guest_type,
     name:       e.name,
     relation:   e.relation,
@@ -1045,6 +1054,7 @@ async function saveEdit() {
 
   try {
     await updateEntry(currentRole, editingId, {
+      ledger_no:  editDraft.ledger_no != null && editDraft.ledger_no !== '' ? Number(editDraft.ledger_no) : null,
       name:       editDraft.name.trim(),
       guest_type: editDraft.guest_type,
       relation:   editDraft.relation,
@@ -1065,25 +1075,27 @@ function setAmount(v) {
 }
 
 async function submitEntry() {
-  const name      = document.getElementById('input-name').value.trim();
+  const ledger_no  = document.getElementById('input-ledger-no').value.trim();
+  const name       = document.getElementById('input-name').value.trim();
   const guest_type = selectedGuestType;
-  const relation  = document.getElementById('input-relation').value;
-  const amount    = parseAmount(document.getElementById('input-amount').value);
-  const memo      = document.getElementById('input-memo').value.trim();
+  const relation   = document.getElementById('input-relation').value;
+  const amount     = parseAmount(document.getElementById('input-amount').value);
+  const memo       = document.getElementById('input-memo').value.trim();
 
   if (!name)              { alert('이름을 입력해주세요.'); return; }
   if (!amount || amount <= 0) { alert('축의금을 입력해주세요.'); return; }
 
   try {
-    await addEntry(currentRole, { id: genId(), name, guest_type, relation, amount, memo, ts: nowHHMM() });
+    await addEntry(currentRole, { id: genId(), ledger_no: ledger_no ? Number(ledger_no) : null, name, guest_type, relation, amount, memo, ts: nowHHMM() });
   } catch (e) {
     alert('저장 실패: ' + (e && e.message ? e.message : e));
     return;
   }
 
-  document.getElementById('input-name').value   = '';
-  document.getElementById('input-amount').value = '';
-  document.getElementById('input-memo').value   = '';
+  document.getElementById('input-ledger-no').value = '';
+  document.getElementById('input-name').value       = '';
+  document.getElementById('input-amount').value     = '';
+  document.getElementById('input-memo').value       = '';
 
   const banner = document.getElementById('success-banner');
   banner.style.display = 'block';
