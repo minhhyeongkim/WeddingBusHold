@@ -1,0 +1,1194 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>축의금 관리</title>
+
+  <!-- Favicon (SVG, 브라우저 탭) -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%23b84d70'/><text x='16' y='23' text-anchor='middle' font-size='17' fill='white' font-weight='700' font-family='system-ui'>축</text></svg>">
+
+  <!-- OG / 링크 썸네일 -->
+  <meta property="og:title"       content="축의금 관리">
+  <meta property="og:description" content="결혼식 당일 축의대 전용 축의금 입력 · 관리 앱">
+  <meta property="og:image"       content="wedding-og.svg">
+  <meta property="og:type"        content="website">
+  <meta name="twitter:card"       content="summary_large_image">
+  <meta name="twitter:title"      content="축의금 관리">
+  <meta name="twitter:image"      content="wedding-og.svg">
+  <style>
+    :root {
+      --bg:           #f4f4f6;
+      --bg-card:      #ffffff;
+      --bg-input:     #ffffff;
+      --text:         #1a1a1a;
+      --text-sub:     #6b7280;
+      --border:       #e5e7eb;
+      --border-focus: #a78bfa;
+      --btn-primary:  #b84d70;
+      --btn-groom:    #3a62aa;
+      --success-bg:   #d1fae5;
+      --success-text: #065f46;
+      --error-text:   #dc2626;
+      --shadow:       0 1px 3px rgba(0,0,0,0.08);
+      --radius:       10px;
+
+      /* ── side labels (사각형, 짙은 뉴트럴) — badge와 명확히 다른 스타일 */
+      --sl-bride: #6b3a52;   /* 짙은 마호가니 로즈 */
+      --sl-groom: #324e72;   /* 짙은 네이비 슬레이트 */
+
+      /* ── guest type badges (파스텔 배경 + 짙은 텍스트) — 눈부심 없음 */
+      --b-bride:        #7a2848; --bb-bride:        #f8dde8;
+      --b-bride-father: #4a3490; --bb-bride-father: #eae7f8;
+      --b-bride-mother: #7a2878; --bb-bride-mother: #f5e5f6;
+      --b-groom:        #203d88; --bb-groom:        #dce6f8;
+      --b-groom-father: #0a4878; --bb-groom-father: #daeef8;
+      --b-groom-mother: #0a5040; --bb-groom-mother: #d4f0e8;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg:           #0f0f0f;
+        --bg-card:      #1e1e1e;
+        --bg-input:     #2a2a2a;
+        --text:         #f0f0f0;
+        --text-sub:     #9ca3af;
+        --border:       #374151;
+        --border-focus: #8b6dcc;
+        --success-bg:   #064e3b;
+        --success-text: #6ee7b7;
+        --error-text:   #f87171;
+        --shadow:       0 1px 4px rgba(0,0,0,0.35);
+        --btn-primary:  #c96080;
+        --btn-groom:    #4e75bb;
+        --sl-bride:     #8a5068;
+        --sl-groom:     #486488;
+        /* dark mode badge bg */
+        --bb-bride:        #3c1425; --b-bride:        #f0a8c0;
+        --bb-bride-father: #221440; --b-bride-father: #b8a8f0;
+        --bb-bride-mother: #3a1438; --b-bride-mother: #e8a0e8;
+        --bb-groom:        #141e40; --b-groom:        #90aae0;
+        --bb-groom-father: #0c2038; --b-groom-father: #80c0e8;
+        --bb-groom-mother: #0c2820; --b-groom-mother: #80d0b8;
+      }
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ── screens ── */
+    .screen { display: none; }
+    .screen.active { display: block; }
+
+    /* ── login ── */
+    .login-wrap {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 16px;
+    }
+    .login-card {
+      background: var(--bg-card);
+      border-radius: var(--radius);
+      padding: 32px 24px;
+      width: 100%;
+      max-width: 360px;
+      box-shadow: var(--shadow);
+    }
+    .login-title { font-size: 20px; font-weight: 700; text-align: center; margin-bottom: 6px; }
+    .login-sub   { font-size: 13px; color: var(--text-sub); text-align: center; margin-bottom: 28px; }
+
+    /* ── form basics ── */
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-sub);
+      margin-bottom: 6px;
+    }
+    select,
+    input[type="text"],
+    input[type="password"] {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      background: var(--bg-input);
+      color: var(--text);
+      font-size: 15px;
+      outline: none;
+      transition: border-color 0.15s;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+    select:focus, input:focus { border-color: var(--border-focus); }
+    .form-group { margin-bottom: 14px; }
+
+    /* ── buttons ── */
+    .btn {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.15s;
+      color: #fff;
+    }
+    .btn:active { opacity: 0.8; }
+    .btn-primary { background: var(--btn-primary); }
+    .btn-groom   { background: var(--btn-groom); }
+
+    .btn-logout {
+      padding: 6px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      background: transparent;
+      color: var(--text-sub);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .error-msg { color: var(--error-text); font-size: 13px; margin-top: 8px; text-align: center; }
+
+    /* ── header ── */
+    .header {
+      background: var(--bg-card);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 16px;
+      position: sticky;
+      top: 0;
+      z-index: 20;
+    }
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .header-title { font-size: 16px; font-weight: 700; }
+
+    /* ── guest type badges (파스텔 bg + 짙은 텍스트, pill shape) ── */
+    .badge {
+      display: inline-block;
+      padding: 3px 9px;
+      border-radius: 20px;   /* pill */
+      font-size: 12px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .badge-bride        { background: var(--bb-bride);        color: var(--b-bride); }
+    .badge-bride-father { background: var(--bb-bride-father); color: var(--b-bride-father); }
+    .badge-bride-mother { background: var(--bb-bride-mother); color: var(--b-bride-mother); }
+    .badge-groom        { background: var(--bb-groom);        color: var(--b-groom); }
+    .badge-groom-father { background: var(--bb-groom-father); color: var(--b-groom-father); }
+    .badge-groom-mother { background: var(--bb-groom-mother); color: var(--b-groom-mother); }
+
+    /* ── card ── */
+    .card {
+      background: var(--bg-card);
+      border-radius: var(--radius);
+      padding: 20px 16px;
+      box-shadow: var(--shadow);
+    }
+    .card-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-sub);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 16px;
+    }
+
+    /* ── guest type toggles ── */
+    .guest-type-toggles { display: flex; gap: 6px; flex-wrap: wrap; }
+    .gt-toggle {
+      flex: 1;
+      padding: 8px 6px;
+      border-radius: 8px;
+      border: 1.5px solid var(--border);
+      background: transparent;
+      color: var(--text-sub);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+    .gt-toggle.sel-bride { background: var(--btn-primary); border-color: var(--btn-primary); color: #fff; }
+    .gt-toggle.sel-groom { background: var(--btn-groom);   border-color: var(--btn-groom);   color: #fff; }
+
+    /* ── amount wrap ── */
+    .amount-wrap { position: relative; }
+    .amount-wrap input { padding-right: 40px; }
+    .btn-amount-clear {
+      position: absolute; right: 10px; top: 50%;
+      transform: translateY(-50%);
+      border: none; background: none;
+      color: var(--text-sub); font-size: 16px; line-height: 1; cursor: pointer; padding: 4px;
+    }
+
+    /* ── quick amount ── */
+    .quick-btns { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 8px; }
+    .btn-quick {
+      padding: 5px 10px;
+      border: 1.5px solid var(--border);
+      border-radius: 20px;
+      background: var(--bg-input);
+      color: var(--text);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .btn-quick:hover { border-color: var(--btn-primary); color: var(--btn-primary); }
+
+    /* ── success banner ── */
+    .success-banner {
+      display: none;
+      background: var(--success-bg);
+      color: var(--success-text);
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      text-align: center;
+      margin-top: 12px;
+    }
+
+    /* ══════════════════════════════════════════
+       2-COLUMN INPUT LAYOUT
+    ══════════════════════════════════════════ */
+    .input-layout {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+      padding: 16px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    /* LEFT — list */
+    .list-side { flex: 1; min-width: 0; }
+
+    /* RIGHT — form (sticky) */
+    .form-side {
+      width: 300px;
+      flex-shrink: 0;
+      position: sticky;
+      top: 58px;
+      max-height: calc(100vh - 74px);
+      overflow-y: auto;
+      scrollbar-width: thin;
+    }
+
+    /* mobile: stack, form on top */
+    @media (max-width: 680px) {
+      .input-layout { flex-direction: column-reverse; }
+      .form-side { width: 100%; position: static; max-height: none; }
+    }
+
+    /* ── tabs ── */
+    .tabs-row {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      padding-bottom: 12px;
+      scrollbar-width: none;
+    }
+    .tabs-row::-webkit-scrollbar { display: none; }
+
+    .tab {
+      padding: 7px 14px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+      white-space: nowrap;
+      cursor: pointer;
+      border: 1.5px solid var(--border);
+      background: transparent;
+      color: var(--text-sub);
+      transition: all 0.15s;
+    }
+    .tab.active-bride { background: var(--btn-primary); color: #fff; border-color: var(--btn-primary); }
+    .tab.active-groom { background: var(--btn-groom);   color: #fff; border-color: var(--btn-groom); }
+    .tab.active-admin { background: #374151;             color: #fff; border-color: #374151; }
+
+    /* ── sub-tabs (2nd level filter) ── */
+    .sub-tabs-row {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      padding: 8px 0 12px;
+      scrollbar-width: none;
+    }
+    .sub-tabs-row::-webkit-scrollbar { display: none; }
+    .sub-tab { font-size: 12px; padding: 5px 12px; }
+
+    /* ── summary bar ── */
+    .summary-bar { padding: 0 0 10px; }
+    .summary-label  { font-size: 12px; color: var(--text-sub); margin-bottom: 2px; }
+    .summary-amount { font-size: 20px; font-weight: 700; }
+
+    /* ── entry list ── */
+    .entry-list { padding-bottom: 40px; }
+
+    .entry-item {
+      background: var(--bg-card);
+      border-radius: var(--radius);
+      padding: 12px 14px;
+      margin-bottom: 8px;
+      box-shadow: var(--shadow);
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+    .entry-item.editing {
+      border: 2px solid var(--border-focus);
+    }
+    .entry-main { flex: 1; min-width: 0; }
+    .entry-top  {
+      display: flex; align-items: center;
+      gap: 6px; flex-wrap: wrap; margin-bottom: 4px;
+    }
+    .entry-name   { font-size: 15px; font-weight: 700; }
+    .entry-rel    { font-size: 12px; color: var(--text-sub); }
+    .entry-memo   { font-size: 12px; color: var(--text-sub); margin-top: 2px; }
+    .entry-time   { font-size: 11px; color: var(--text-sub); margin-top: 2px; }
+
+    .entry-right {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 5px;
+      flex-shrink: 0;
+    }
+    .entry-amount { font-size: 16px; font-weight: 700; }
+
+    .row-btns { display: flex; gap: 4px; }
+    .btn-edit, .btn-del {
+      padding: 3px 8px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: transparent;
+      color: var(--text-sub);
+      font-size: 11px;
+      cursor: pointer;
+    }
+
+    /* ── inline edit form ── */
+    .edit-wrap { width: 100%; }
+    .edit-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    .edit-input, .edit-select {
+      padding: 8px 10px;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      background: var(--bg-input);
+      color: var(--text);
+      font-size: 14px;
+      outline: none;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+    .edit-input { width: 100%; }
+    .edit-input:focus, .edit-select:focus { border-color: var(--border-focus); }
+    .edit-actions { display: flex; gap: 8px; margin-top: 10px; }
+    .btn-save {
+      flex: 1; padding: 9px;
+      background: var(--btn-primary); color: #fff;
+      border: none; border-radius: 8px;
+      font-size: 14px; font-weight: 600; cursor: pointer;
+    }
+    .btn-cancel {
+      flex: 1; padding: 9px;
+      background: transparent; color: var(--text-sub);
+      border: 1.5px solid var(--border); border-radius: 8px;
+      font-size: 14px; font-weight: 600; cursor: pointer;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px 0;
+      color: var(--text-sub);
+      font-size: 14px;
+    }
+
+    /* ══════════════════════════════════════════
+       ADMIN
+    ══════════════════════════════════════════ */
+    .admin-body { padding: 16px; max-width: 720px; margin: 0 auto; }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .stat-card {
+      background: var(--bg-card);
+      border-radius: var(--radius);
+      padding: 14px 10px;
+      box-shadow: var(--shadow);
+      text-align: center;
+    }
+    .stat-label { font-size: 11px; color: var(--text-sub); font-weight: 600; margin-bottom: 4px; }
+    .stat-value { font-size: 15px; font-weight: 700; }
+    .stat-card.bride .stat-value { color: var(--sl-bride); }
+    .stat-card.groom .stat-value { color: var(--sl-groom); }
+
+    /* ── side label (사각형, 짙은 뉴트럴 — badge pill과 명확히 구분) ── */
+    .side-label {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 8px;
+      border-radius: 4px;   /* 사각형 → pill badge와 구분 */
+      font-size: 11px;
+      font-weight: 700;
+      white-space: nowrap;
+      color: #fff;
+      letter-spacing: 0.2px;
+    }
+    .side-label-bride { background: var(--sl-bride); }
+    .side-label-groom { background: var(--sl-groom); }
+
+    /* ── export buttons ── */
+    .export-btns { display: flex; gap: 8px; margin-bottom: 12px; }
+    .btn-export {
+      flex: 1; padding: 9px;
+      border: 1.5px solid var(--border); border-radius: 8px;
+      background: var(--bg-card); color: var(--text-sub);
+      font-size: 13px; font-weight: 600; cursor: pointer; text-align: center;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .btn-export:hover { border-color: var(--text); color: var(--text); }
+
+    .btn-refresh {
+      display: block; margin-bottom: 4px;
+      padding: 10px; width: 100%;
+      border: 1.5px solid var(--border); border-radius: 8px;
+      background: transparent; color: var(--text-sub);
+      font-size: 13px; font-weight: 600; cursor: pointer; text-align: center;
+    }
+
+    .tabs-wrap { overflow-x: auto; scrollbar-width: none; margin-bottom: 8px; }
+    .tabs-wrap::-webkit-scrollbar { display: none; }
+    .tabs-wrap .tabs-row { padding-bottom: 0; }
+
+    .filter-info { font-size: 13px; color: var(--text-sub); margin-bottom: 10px; }
+
+    .admin-item {
+      background: var(--bg-card);
+      border-radius: var(--radius);
+      padding: 14px;
+      margin-bottom: 8px;
+      box-shadow: var(--shadow);
+    }
+    .admin-item-top {
+      display: flex; align-items: center;
+      justify-content: space-between; gap: 8px;
+    }
+    .admin-item-left {
+      display: flex; align-items: center;
+      gap: 6px; flex-wrap: wrap; flex: 1; min-width: 0;
+    }
+    .admin-item-amount { font-size: 16px; font-weight: 700; flex-shrink: 0; }
+    .admin-item-meta   { font-size: 12px; color: var(--text-sub); margin-top: 5px; }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════ -->
+<!--  LOGIN                                     -->
+<!-- ══════════════════════════════════════════ -->
+<div id="screen-login" class="screen active">
+  <div class="login-wrap">
+    <div class="login-card">
+      <div class="login-title">💐 축의금 관리</div>
+      <div class="login-sub">결혼식 당일 축의대 전용</div>
+
+      <div class="form-group">
+        <label>역할 선택</label>
+        <select id="login-role">
+          <option value="bride">신부측 담당자</option>
+          <option value="groom">신랑측 담당자</option>
+          <option value="admin">관리자</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>비밀번호</label>
+        <input type="password" id="login-pw" placeholder="비밀번호 입력" />
+      </div>
+
+      <div id="login-error" class="error-msg" style="display:none;"></div>
+      <button class="btn btn-primary" onclick="login()" style="margin-top:4px;">로그인</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<!--  INPUT (2-column)                          -->
+<!-- ══════════════════════════════════════════ -->
+<div id="screen-input" class="screen">
+  <div class="header">
+    <div class="header-inner">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span id="input-role-badge" class="badge"></span>
+        <span class="header-title">축의금 입력</span>
+      </div>
+      <button class="btn-logout" onclick="logout()">로그아웃</button>
+    </div>
+  </div>
+
+  <div class="input-layout">
+
+    <!-- LEFT: 입력 내역 목록 -->
+    <div class="list-side">
+      <div id="input-tabs" class="tabs-row"></div>
+      <div class="summary-bar">
+        <div class="summary-label">합계</div>
+        <div id="input-total" class="summary-amount">0원</div>
+      </div>
+      <div id="input-list" class="entry-list"></div>
+    </div>
+
+    <!-- RIGHT: 입력 폼 -->
+    <div class="form-side">
+      <div class="card">
+        <div class="card-title">새 항목 입력</div>
+
+        <div class="form-group">
+          <label>손님 유형</label>
+          <div id="guest-type-toggles" class="guest-type-toggles"></div>
+        </div>
+        <div class="form-group">
+          <label>하객 이름</label>
+          <input type="text" id="input-name" placeholder="이름 입력" />
+        </div>
+        <div class="form-group">
+          <label>관계</label>
+          <select id="input-relation">
+            <option value="가족">가족</option>
+            <option value="친척">친척</option>
+            <option value="친구">친구</option>
+            <option value="직장">직장</option>
+            <option value="기타">기타</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>축의금 (원)</label>
+          <div class="amount-wrap">
+            <input type="text" id="input-amount" inputmode="numeric" placeholder="0"
+              oninput="this.value=fmtAmountInput(this.value)" />
+            <button class="btn-amount-clear" onclick="clearAmount()" type="button">✕</button>
+          </div>
+          <div class="quick-btns">
+            <button class="btn-quick" onclick="setAmount(30000)">3만</button>
+            <button class="btn-quick" onclick="setAmount(50000)">5만</button>
+            <button class="btn-quick" onclick="setAmount(70000)">7만</button>
+            <button class="btn-quick" onclick="setAmount(100000)">10만</button>
+            <button class="btn-quick" onclick="setAmount(200000)">20만</button>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>메모 <span style="font-weight:400;font-size:12px;">(선택)</span></label>
+          <input type="text" id="input-memo" placeholder="메모 입력" />
+        </div>
+
+        <button id="submit-btn" class="btn btn-primary" onclick="submitEntry()">입력</button>
+        <div id="success-banner" class="success-banner">✓ 입력 완료되었습니다</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<!--  ADMIN                                     -->
+<!-- ══════════════════════════════════════════ -->
+<div id="screen-admin" class="screen">
+  <div class="header">
+    <div class="header-inner">
+      <span class="header-title">📊 축의금 현황</span>
+      <button class="btn-logout" onclick="logout()">로그아웃</button>
+    </div>
+  </div>
+
+  <div class="admin-body">
+    <div class="stats-grid">
+      <div class="stat-card bride">
+        <div class="stat-label">신부측</div>
+        <div id="stat-bride" class="stat-value">—</div>
+      </div>
+      <div class="stat-card groom">
+        <div class="stat-label">신랑측</div>
+        <div id="stat-groom" class="stat-value">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">전체</div>
+        <div id="stat-all" class="stat-value">—</div>
+      </div>
+    </div>
+
+    <button class="btn-refresh" onclick="loadAdminData()">↻ 새로고침</button>
+
+    <!-- 상위 필터: 전체 / 신부측 / 신랑측 -->
+    <div id="admin-tabs-top" class="tabs-row"></div>
+    <!-- 하위 필터: 손님 유형 (측 선택 시 노출) -->
+    <div id="admin-tabs-sub"></div>
+
+    <div class="export-btns">
+      <button class="btn-export" onclick="exportImage()">📷 이미지 저장</button>
+      <button class="btn-export" onclick="exportCSV()">📊 엑셀 저장</button>
+    </div>
+
+    <div id="admin-export-area">
+      <div id="admin-filter-info" class="filter-info"></div>
+      <div id="admin-list" class="entry-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<!--  FIREBASE                                  -->
+<!-- ══════════════════════════════════════════ -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+<!-- ══════════════════════════════════════════ -->
+<!--  SCRIPT                                    -->
+<!-- ══════════════════════════════════════════ -->
+<script>
+// ── Firebase ─────────────────────────────────
+firebase.initializeApp({
+  apiKey:            "AIzaSyAuXJ3E1Lv1hfFEkMhY4MBxmNqyEphprdY",
+  authDomain:        "wedding-bus.firebaseapp.com",
+  databaseURL:       "https://wedding-bus-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId:         "wedding-bus",
+  storageBucket:     "wedding-bus.firebasestorage.app",
+  messagingSenderId: "2295585810",
+  appId:             "1:2295585810:web:77ea5192e9a2d427834ccb",
+});
+const db = firebase.database();
+
+// ── Constants ───────────────────────────────
+const ACCOUNTS = { bride: 'bride1234', groom: 'groom1234', admin: 'admin0000' };
+
+const KEYS = {
+  bride: 'wedding_bride_entries',
+  groom: 'wedding_groom_entries',
+};
+
+const GUEST_TYPES = {
+  bride: ['신부측', '신부 아버님측', '신부 어머님측'],
+  groom: ['신랑측', '신랑 아버님측', '신랑 어머님측'],
+};
+
+const RELATIONS = ['가족', '친척', '친구', '직장', '기타'];
+
+const ADMIN_SUB = {
+  '신부측': ['전체', '신부측', '신부 아버님측', '신부 어머님측'],
+  '신랑측': ['전체', '신랑측', '신랑 아버님측', '신랑 어머님측'],
+};
+
+const BADGE_CLS = {
+  '신부측':       'badge-bride',
+  '신부 아버님측': 'badge-bride-father',
+  '신부 어머님측': 'badge-bride-mother',
+  '신랑측':       'badge-groom',
+  '신랑 아버님측': 'badge-groom-father',
+  '신랑 어머님측': 'badge-groom-mother',
+};
+
+// ── State ────────────────────────────────────
+let currentRole       = null;
+let selectedGuestType = null;
+let editingId         = null;
+let editDraft         = {};
+let listTab           = '전체';
+let adminSide         = '전체'; // 전체 | 신부측 | 신랑측
+let adminType         = '전체'; // 하위 손님유형
+let cache             = { bride: [], groom: [] };
+
+// ── Firebase helpers ─────────────────────────
+async function loadEntries(role) {
+  try {
+    const snap = await db.ref(KEYS[role]).get();
+    return snap.exists() ? snap.val() : [];
+  } catch { return []; }
+}
+
+async function addEntry(role, newEntry) {
+  const snap    = await db.ref(KEYS[role]).get();
+  const entries = snap.exists() ? snap.val() : [];
+  entries.push(newEntry);
+  await db.ref(KEYS[role]).set(entries);
+}
+
+async function updateEntry(role, id, fields) {
+  const snap    = await db.ref(KEYS[role]).get();
+  const entries = snap.exists() ? snap.val() : [];
+  const idx     = entries.findIndex(e => e.id === id);
+  if (idx >= 0) {
+    entries[idx] = { ...entries[idx], ...fields };
+    await db.ref(KEYS[role]).set(entries);
+  }
+}
+
+async function removeEntry(role, id) {
+  const snap    = await db.ref(KEYS[role]).get();
+  const entries = snap.exists() ? snap.val() : [];
+  await db.ref(KEYS[role]).set(entries.filter(e => e.id !== id));
+}
+
+// ── Utils ────────────────────────────────────
+function fmt(n)    { return n.toLocaleString('ko-KR') + '원'; }
+function nowHHMM() {
+  const d = new Date();
+  return String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
+}
+function genId() {
+  return Date.now() + '_' + String(Math.floor(Math.random() * 9000) + 1000);
+}
+function badgeHtml(type) {
+  return `<span class="badge ${BADGE_CLS[type] || ''}">${esc(type)}</span>`;
+}
+function esc(s) {
+  return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function fmtAmountInput(val) {
+  const d = String(val).replace(/\D/g, '');
+  return d ? parseInt(d, 10).toLocaleString('ko-KR') : '';
+}
+function parseAmount(val) {
+  const d = String(val).replace(/\D/g, '');
+  return d ? parseInt(d, 10) : 0;
+}
+function clearAmount() {
+  document.getElementById('input-amount').value = '';
+}
+
+// ── Screen ───────────────────────────────────
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + id).classList.add('active');
+}
+
+// ── Login / Logout ───────────────────────────
+function login() {
+  const role  = document.getElementById('login-role').value;
+  const pw    = document.getElementById('login-pw').value;
+  const errEl = document.getElementById('login-error');
+
+  if (pw !== ACCOUNTS[role]) {
+    errEl.textContent = '비밀번호가 올바르지 않습니다.';
+    errEl.style.display = 'block';
+    return;
+  }
+
+  errEl.style.display = 'none';
+  currentRole = role;
+
+  if (role === 'admin') {
+    loadAdminData();
+    showScreen('admin');
+  } else {
+    setupInputScreen(role);
+    showScreen('input');
+  }
+}
+
+document.getElementById('login-pw').addEventListener('keydown', e => {
+  if (e.key === 'Enter') login();
+});
+
+function logout() {
+  currentRole       = null;
+  selectedGuestType = null;
+  editingId         = null;
+  editDraft         = {};
+  listTab           = '전체';
+  adminSide         = '전체';
+  adminType         = '전체';
+  cache             = { bride: [], groom: [] };
+  document.getElementById('login-pw').value           = '';
+  document.getElementById('login-error').style.display = 'none';
+  showScreen('login');
+}
+
+// ── Input screen setup ───────────────────────
+function setupInputScreen(role) {
+  const badge = document.getElementById('input-role-badge');
+  badge.className   = 'badge ' + (role === 'bride' ? 'badge-bride' : 'badge-groom');
+  badge.textContent = role === 'bride' ? '신부측' : '신랑측';
+
+  document.getElementById('submit-btn').className =
+    'btn ' + (role === 'bride' ? 'btn-primary' : 'btn-groom');
+
+  selectedGuestType = GUEST_TYPES[role][0];
+  renderGuestTypeToggles(role);
+
+  listTab = '전체';
+  refreshInputList(role);
+}
+
+// ── Guest type toggles (form) ────────────────
+function renderGuestTypeToggles(role) {
+  const cls = role === 'bride' ? 'sel-bride' : 'sel-groom';
+  document.getElementById('guest-type-toggles').innerHTML =
+    GUEST_TYPES[role].map(t =>
+      `<button class="gt-toggle ${t === selectedGuestType ? cls : ''}"
+        onclick="selectGuestType('${t}')" type="button">${t}</button>`
+    ).join('');
+}
+
+function selectGuestType(type) {
+  selectedGuestType = type;
+  renderGuestTypeToggles(currentRole);
+}
+
+// ── Tabs ─────────────────────────────────────
+function renderInputTabs(role) {
+  const color = role === 'bride' ? 'active-bride' : 'active-groom';
+  document.getElementById('input-tabs').innerHTML =
+    ['전체', ...GUEST_TYPES[role]].map(t =>
+      `<button class="tab ${t === listTab ? color : ''}" onclick="setListTab('${t}')">${t}</button>`
+    ).join('');
+}
+
+function setListTab(tab) {
+  listTab = tab;
+  renderInputListView();
+  renderInputTabs(currentRole);
+}
+
+// ── List render ──────────────────────────────
+async function refreshInputList(role) {
+  const entries = await loadEntries(role);
+  cache[role] = entries;
+  renderInputTabs(role);
+  renderInputListView();
+}
+
+function renderInputListView() {
+  const role     = currentRole;
+  const entries  = cache[role] || [];
+  const filtered = listTab === '전체' ? entries : entries.filter(e => e.guest_type === listTab);
+  const total    = filtered.reduce((s, e) => s + e.amount, 0);
+
+  document.getElementById('input-total').textContent = fmt(total);
+
+  const listEl = document.getElementById('input-list');
+  if (!filtered.length) {
+    listEl.innerHTML = '<div class="empty-state">입력된 내역이 없습니다</div>';
+    return;
+  }
+
+  const selCls = role === 'bride' ? 'sel-bride' : 'sel-groom';
+
+  listEl.innerHTML = [...filtered].reverse().map(e => {
+    if (e.id === editingId) return renderEditForm(e, selCls);
+
+    return `
+      <div class="entry-item">
+        <div class="entry-main">
+          <div class="entry-top">
+            ${badgeHtml(e.guest_type)}
+            <span class="entry-name">${esc(e.name)}</span>
+            <span class="entry-rel">${e.relation}</span>
+          </div>
+          ${e.memo ? `<div class="entry-memo">${esc(e.memo)}</div>` : ''}
+          <div class="entry-time">${e.ts}</div>
+        </div>
+        <div class="entry-right">
+          <span class="entry-amount">${fmt(e.amount)}</span>
+          <div class="row-btns">
+            <button class="btn-edit" onclick="startEdit('${e.id}')">수정</button>
+            <button class="btn-del"  onclick="deleteEntry('${e.id}')">삭제</button>
+          </div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function renderEditForm(e, selCls) {
+  const types = GUEST_TYPES[currentRole];
+  const togglesHtml = types.map(t =>
+    `<button class="gt-toggle ${t === editDraft.guest_type ? selCls : ''}"
+      onclick="selectEditGuestType('${t}')" type="button">${t}</button>`
+  ).join('');
+
+  const relOptions = RELATIONS.map(r =>
+    `<option value="${r}" ${r === editDraft.relation ? 'selected' : ''}>${r}</option>`
+  ).join('');
+
+  return `
+    <div class="entry-item editing">
+      <div class="edit-wrap">
+        <div class="guest-type-toggles" style="margin-bottom:10px;">${togglesHtml}</div>
+        <div class="edit-row">
+          <input class="edit-input" type="text" value="${esc(editDraft.name)}"
+            oninput="editDraft.name=this.value" placeholder="이름" style="flex:1;" />
+          <select class="edit-select" onchange="editDraft.relation=this.value"
+            style="flex:0 0 72px;">${relOptions}</select>
+        </div>
+        <div class="amount-wrap" style="margin-bottom:8px;">
+          <input class="edit-input" type="text" inputmode="numeric"
+            value="${editDraft.amount.toLocaleString('ko-KR')}"
+            oninput="editDraft.amount=parseAmount(this.value);this.value=fmtAmountInput(this.value)"
+            placeholder="금액" style="padding-right:12px;" />
+        </div>
+        <input class="edit-input" type="text" value="${esc(editDraft.memo)}"
+          oninput="editDraft.memo=this.value" placeholder="메모 (선택)" />
+        <div class="edit-actions">
+          <button class="btn-save" onclick="saveEdit()" type="button">저장</button>
+          <button class="btn-cancel" onclick="cancelEdit()" type="button">취소</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+// ── Edit actions ─────────────────────────────
+function startEdit(id) {
+  const e = (cache[currentRole] || []).find(x => x.id === id);
+  if (!e) return;
+  editingId = id;
+  editDraft = {
+    guest_type: e.guest_type,
+    name:       e.name,
+    relation:   e.relation,
+    amount:     e.amount,
+    memo:       e.memo || '',
+  };
+  renderInputListView();
+}
+
+function cancelEdit() {
+  editingId = null;
+  editDraft = {};
+  renderInputListView();
+}
+
+function selectEditGuestType(type) {
+  editDraft.guest_type = type;
+  renderInputListView();
+}
+
+async function saveEdit() {
+  if (!String(editDraft.name || '').trim()) { alert('이름을 입력해주세요.'); return; }
+  if (!editDraft.amount || editDraft.amount <= 0) { alert('축의금을 입력해주세요.'); return; }
+
+  try {
+    await updateEntry(currentRole, editingId, {
+      name:       editDraft.name.trim(),
+      guest_type: editDraft.guest_type,
+      relation:   editDraft.relation,
+      amount:     editDraft.amount,
+      memo:       editDraft.memo,
+    });
+    editingId = null;
+    editDraft = {};
+    await refreshInputList(currentRole);
+  } catch (ex) {
+    alert('저장 실패: ' + ex.message);
+  }
+}
+
+// ── Submit / Delete ──────────────────────────
+function setAmount(v) {
+  document.getElementById('input-amount').value = v.toLocaleString('ko-KR');
+}
+
+async function submitEntry() {
+  const name      = document.getElementById('input-name').value.trim();
+  const guest_type = selectedGuestType;
+  const relation  = document.getElementById('input-relation').value;
+  const amount    = parseAmount(document.getElementById('input-amount').value);
+  const memo      = document.getElementById('input-memo').value.trim();
+
+  if (!name)              { alert('이름을 입력해주세요.'); return; }
+  if (!amount || amount <= 0) { alert('축의금을 입력해주세요.'); return; }
+
+  try {
+    await addEntry(currentRole, { id: genId(), name, guest_type, relation, amount, memo, ts: nowHHMM() });
+  } catch (e) {
+    alert('저장 실패: ' + (e && e.message ? e.message : e));
+    return;
+  }
+
+  document.getElementById('input-name').value   = '';
+  document.getElementById('input-amount').value = '';
+  document.getElementById('input-memo').value   = '';
+
+  const banner = document.getElementById('success-banner');
+  banner.style.display = 'block';
+  setTimeout(() => { banner.style.display = 'none'; }, 2500);
+
+  await refreshInputList(currentRole);
+}
+
+async function deleteEntry(id) {
+  if (!confirm('삭제하시겠습니까?')) return;
+  if (editingId === id) { editingId = null; editDraft = {}; }
+  await removeEntry(currentRole, id);
+  await refreshInputList(currentRole);
+}
+
+// ── Admin ────────────────────────────────────
+async function loadAdminData() {
+  const [brideE, groomE] = await Promise.all([loadEntries('bride'), loadEntries('groom')]);
+  cache.bride = brideE;
+  cache.groom = groomE;
+
+  const bt = brideE.reduce((s, e) => s + e.amount, 0);
+  const gt = groomE.reduce((s, e) => s + e.amount, 0);
+  document.getElementById('stat-bride').textContent = fmt(bt);
+  document.getElementById('stat-groom').textContent = fmt(gt);
+  document.getElementById('stat-all').textContent   = fmt(bt + gt);
+
+  renderAdminTabs();
+  renderAdminList();
+}
+
+function renderAdminTabs() {
+  // 상위 탭: 전체 / 신부측 / 신랑측
+  const topTabs = ['전체', '신부측', '신랑측'];
+  document.getElementById('admin-tabs-top').innerHTML = topTabs.map(t => {
+    const isActive = t === adminSide;
+    const cls = isActive
+      ? (t === '신부측' ? 'active-bride' : t === '신랑측' ? 'active-groom' : 'active-admin')
+      : '';
+    return `<button class="tab ${cls}" onclick="setAdminSide('${t}')">${t}</button>`;
+  }).join('');
+
+  // 하위 탭: 손님유형 (측 선택 시만 표시)
+  const subEl = document.getElementById('admin-tabs-sub');
+  if (adminSide === '전체') {
+    subEl.innerHTML = '';
+    return;
+  }
+  const subCls = adminSide === '신부측' ? 'active-bride' : 'active-groom';
+  subEl.innerHTML = `<div class="sub-tabs-row">` +
+    ADMIN_SUB[adminSide].map(t =>
+      `<button class="tab sub-tab ${t === adminType ? subCls : ''}" onclick="setAdminType('${t}')">${t}</button>`
+    ).join('') +
+  `</div>`;
+}
+
+function setAdminSide(side) {
+  adminSide = side;
+  adminType = '전체';
+  renderAdminTabs();
+  renderAdminList();
+}
+
+function setAdminType(type) {
+  adminType = type;
+  renderAdminTabs();
+  renderAdminList();
+}
+
+function getAdminFiltered() {
+  const all = [
+    ...cache.bride.map(e => ({ ...e, _side: 'bride' })),
+    ...cache.groom.map(e => ({ ...e, _side: 'groom' })),
+  ];
+  let result = all;
+  if (adminSide === '신부측') {
+    result = all.filter(e => e._side === 'bride');
+    if (adminType !== '전체') result = result.filter(e => e.guest_type === adminType);
+  } else if (adminSide === '신랑측') {
+    result = all.filter(e => e._side === 'groom');
+    if (adminType !== '전체') result = result.filter(e => e.guest_type === adminType);
+  }
+  result.sort((a, b) => b.amount - a.amount);
+  return result;
+}
+
+function renderAdminList() {
+  const filtered = getAdminFiltered();
+  const subtotal  = filtered.reduce((s, e) => s + e.amount, 0);
+  document.getElementById('admin-filter-info').textContent =
+    `${filtered.length}명 · ${fmt(subtotal)}`;
+
+  const listEl = document.getElementById('admin-list');
+  if (!filtered.length) {
+    listEl.innerHTML = '<div class="empty-state">해당하는 내역이 없습니다</div>';
+    return;
+  }
+
+  listEl.innerHTML = filtered.map(e => {
+    // side label: 사각형(border-radius:4px), guest type badge: pill(border-radius:20px)
+    const sideCls   = e._side === 'bride' ? 'side-label-bride' : 'side-label-groom';
+    const sideLabel = e._side === 'bride' ? '신부측' : '신랑측';
+    const meta      = [e.memo, e.ts].filter(Boolean).join(' · ');
+    return `
+      <div class="admin-item">
+        <div class="admin-item-top">
+          <div class="admin-item-left">
+            <span class="side-label ${sideCls}">${sideLabel}</span>
+            ${badgeHtml(e.guest_type)}
+            <span class="entry-name">${esc(e.name)}</span>
+            <span class="entry-rel">${e.relation}</span>
+          </div>
+          <span class="admin-item-amount">${fmt(e.amount)}</span>
+        </div>
+        ${meta ? `<div class="admin-item-meta">${esc(meta)}</div>` : ''}
+      </div>`;
+  }).join('');
+}
+
+// ── Export ───────────────────────────────────
+function exportCSV() {
+  const filtered = getAdminFiltered();
+  const headers  = ['구분', '손님유형', '이름', '관계', '금액(원)', '메모', '시각'];
+  const rows     = filtered.map(e => [
+    e._side === 'bride' ? '신부측' : '신랑측',
+    e.guest_type, e.name, e.relation, e.amount, e.memo || '', e.ts,
+  ]);
+  const csv = [headers, ...rows]
+    .map(r => r.map(c => `"${String(c).replace(/"/g, '""')}"`).join(','))
+    .join('\n');
+
+  const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  const date = new Date().toLocaleDateString('ko-KR').replace(/\. /g,'-').replace('.','');
+  a.href = url; a.download = `축의금_${date}.csv`; a.click();
+  URL.revokeObjectURL(url);
+}
+
+async function exportImage() {
+  const el  = document.getElementById('admin-export-area');
+  const btn = document.querySelector('.export-btns');
+  btn.style.display = 'none'; // 버튼 숨기고 캡처
+  try {
+    const canvas = await html2canvas(el, {
+      scale: 2,
+      backgroundColor: getComputedStyle(document.body).getPropertyValue('background-color') || '#f4f4f6',
+      useCORS: true,
+    });
+    const url  = canvas.toDataURL('image/png');
+    const a    = document.createElement('a');
+    const date = new Date().toLocaleDateString('ko-KR').replace(/\. /g,'-').replace('.','');
+    a.href = url; a.download = `축의금_${date}.png`; a.click();
+  } finally {
+    btn.style.display = 'flex';
+  }
+}
+</script>
+</body>
+</html>

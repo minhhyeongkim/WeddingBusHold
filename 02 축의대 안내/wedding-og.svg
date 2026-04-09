@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%"   stop-color="#fdf0f4"/>
+      <stop offset="50%"  stop-color="#fce8f5"/>
+      <stop offset="100%" stop-color="#eee8ff"/>
+    </linearGradient>
+    <filter id="card-shadow" x="-8%" y="-8%" width="116%" height="130%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="18"/>
+      <feOffset dx="0" dy="10"/>
+      <feComponentTransfer><feFuncA type="linear" slope="0.10"/></feComponentTransfer>
+      <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bg)"/>
+
+  <!-- Decorative blobs -->
+  <circle cx="110"  cy="105" r="95"  fill="#f4c8d8" opacity="0.55"/>
+  <circle cx="1090" cy="525" r="115" fill="#ddd0f8" opacity="0.45"/>
+  <circle cx="55"   cy="565" r="72"  fill="#f8d4e8" opacity="0.40"/>
+  <circle cx="1145" cy="85"  r="82"  fill="#ccdcf8" opacity="0.38"/>
+  <circle cx="600"  cy="18"  r="52"  fill="#f8dcea" opacity="0.45"/>
+
+  <!-- Card -->
+  <rect x="250" y="100" width="700" height="430" rx="28" fill="white" opacity="0.96" filter="url(#card-shadow)"/>
+  <!-- Card top accent -->
+  <rect x="250" y="100" width="700" height="6" rx="3" fill="#b84d70" opacity="0.65"/>
+
+  <!-- Flower — center -->
+  <g transform="translate(600,238)">
+    <ellipse cx="0"   cy="-30" rx="13" ry="22" fill="#f0a8c0" opacity="0.82"/>
+    <ellipse cx="0"   cy="30"  rx="13" ry="22" fill="#f0a8c0" opacity="0.82"/>
+    <ellipse cx="-30" cy="0"   rx="22" ry="13" fill="#f0a8c0" opacity="0.82"/>
+    <ellipse cx="30"  cy="0"   rx="22" ry="13" fill="#f0a8c0" opacity="0.82"/>
+    <ellipse cx="-21" cy="-21" rx="13" ry="20" fill="#e898b8" opacity="0.72" transform="rotate(-45 -21 -21)"/>
+    <ellipse cx="21"  cy="-21" rx="13" ry="20" fill="#e898b8" opacity="0.72" transform="rotate(45  21 -21)"/>
+    <ellipse cx="21"  cy="21"  rx="13" ry="20" fill="#e898b8" opacity="0.72" transform="rotate(-45  21  21)"/>
+    <ellipse cx="-21" cy="21"  rx="13" ry="20" fill="#e898b8" opacity="0.72" transform="rotate(45 -21  21)"/>
+    <circle cx="0" cy="0" r="18" fill="#ffe0ec"/>
+    <circle cx="0" cy="0" r="9"  fill="#ffc8dc"/>
+  </g>
+
+  <!-- Title -->
+  <text x="600" y="338"
+    text-anchor="middle" font-size="60" font-weight="700"
+    fill="#6b3a52" letter-spacing="-1"
+    font-family="'Apple SD Gothic Neo','Malgun Gothic','맑은 고딕',sans-serif">
+    축의금 관리
+  </text>
+
+  <!-- Divider -->
+  <line x1="460" y1="366" x2="740" y2="366" stroke="#e0b8cc" stroke-width="1.5"/>
+
+  <!-- Subtitle -->
+  <text x="600" y="408"
+    text-anchor="middle" font-size="26" fill="#9c7080"
+    font-family="'Apple SD Gothic Neo','Malgun Gothic',sans-serif">
+    결혼식 당일 축의대 전용
+  </text>
+
+  <!-- Dot decoration -->
+  <circle cx="562" cy="458" r="4" fill="#d8b0c0"/>
+  <circle cx="582" cy="458" r="4" fill="#d8b0c0"/>
+  <circle cx="600" cy="458" r="4" fill="#d8b0c0" opacity="0.5"/>
+  <circle cx="618" cy="458" r="4" fill="#d8b0c0"/>
+  <circle cx="638" cy="458" r="4" fill="#d8b0c0"/>
+
+  <!-- Small flower left -->
+  <g transform="translate(335, 295) scale(0.55)" opacity="0.45">
+    <ellipse cx="0" cy="-26" rx="11" ry="18" fill="#f0a8c0"/>
+    <ellipse cx="0" cy="26"  rx="11" ry="18" fill="#f0a8c0"/>
+    <ellipse cx="-26" cy="0" rx="18" ry="11" fill="#f0a8c0"/>
+    <ellipse cx="26"  cy="0" rx="18" ry="11" fill="#f0a8c0"/>
+    <circle cx="0" cy="0" r="14" fill="#ffe0ec"/>
+  </g>
+
+  <!-- Small flower right -->
+  <g transform="translate(865, 295) scale(0.55)" opacity="0.45">
+    <ellipse cx="0"   cy="-26" rx="11" ry="18" fill="#b8b8f8"/>
+    <ellipse cx="0"   cy="26"  rx="11" ry="18" fill="#b8b8f8"/>
+    <ellipse cx="-26" cy="0"   rx="18" ry="11" fill="#b8b8f8"/>
+    <ellipse cx="26"  cy="0"   rx="18" ry="11" fill="#b8b8f8"/>
+    <circle cx="0" cy="0" r="14" fill="#e0d8ff"/>
+  </g>
+</svg>
