@@ -448,7 +448,7 @@
     <div class="inner">
       <div class="event-label">아벤티움 3층 · 12:30 예식 · 축의대 11:30 오픈</div>
       <h1>축의대 매뉴얼</h1>
-      <p class="header-sub">역할을 선택하세요</p>
+      <p class="header-sub">신랑측·신부측 각 2인 1팀 — 하객 응대 1인 + 명부 기입 1인</p>
       <nav class="role-tabs">
         <button class="role-btn" id="btn-guest"  onclick="showPanel('guest')">🤝 하객 응대</button>
         <button class="role-btn" id="btn-ledger" onclick="showPanel('ledger')">📋 명부 기입</button>
@@ -459,14 +459,6 @@
 
   <!-- ── 본문 ──────────────────────────────────────────────────────── -->
   <main class="container">
-
-    <!-- panel-intro -->
-    <div class="panel active" id="panel-intro">
-      <div class="intro-box">
-        <div class="intro-icon">📋</div>
-        <p>위에서 담당 역할을 선택하면<br>해당 매뉴얼을 확인할 수 있습니다.</p>
-      </div>
-    </div>
 
     <!-- panel-guest: 하객 응대 -->
     <div class="panel" id="panel-guest">
@@ -777,6 +769,9 @@
       var open = document.getElementById(bodyId).classList.toggle('open');
       document.getElementById(btnId).classList.toggle('open', open);
     }
+
+    // 랜딩 시 하객 응대 기본 선택
+    showPanel('guest');
   </script>
 
 </body>
