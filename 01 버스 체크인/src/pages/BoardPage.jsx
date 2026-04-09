@@ -38,7 +38,7 @@ const isBoarded = (g, dir) =>
 export default function BoardPage() {
   const [guests,      setGuests]      = useState([]);
   const [direction,   setDirection]   = useState("상행");
-  const [seatMapOpen, setSeatMapOpen] = useState(false);
+  const [seatMapOpen, setSeatMapOpen] = useState(true);
   const [justDone,    setJustDone]    = useState(false);
   const prevAllUp   = useRef(false);
   const prevAllDown = useRef(false);
