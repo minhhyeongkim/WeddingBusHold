@@ -363,7 +363,7 @@ export default function App() {
               <p style={{ margin: "0 0 10px", fontSize: 12, fontWeight: 600, color: C.textSub }}>현재 등록 · {total}명</p>
               {[...guests].sort((a, b) => a.seat - b.seat).map(g => (
                 <div key={g.id} style={{ display: "flex", alignItems: "center", gap: 8, padding: "7px 0", borderBottom: `1px solid ${C.grayPale}` }}>
-                  <span style={{ fontSize: 12, fontWeight: 700, color: C.purple, width: 28, flexShrink: 0 }}>{g.seat}석</span>
+                  <span style={{ fontSize: 12, fontWeight: 700, color: C.purple, width: 28, flexShrink: 0 }}>{g.seat}좌석</span>
                   <span style={{ flex: 1, fontSize: 13, color: C.text }}>{g.name}</span>
                   <span style={{ fontSize: 12, color: C.textSub }}>{g.phone || "-"}</span>
                   <button onClick={() => del(g.id)} style={{ width: 24, height: 24, borderRadius: 5, border: `1px solid ${C.border}`, background: C.white, cursor: "pointer", fontSize: 11, color: C.red, flexShrink: 0 }}>✕</button>
