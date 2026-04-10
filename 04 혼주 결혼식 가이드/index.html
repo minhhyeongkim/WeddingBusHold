@@ -755,19 +755,28 @@ function showSection(id) {
 }
 
 // ── 타임라인 현재 시각 하이라이트 ─────────────────────────
+const WEDDING_DATE = '2026-04-12';
+
 function updateTimeline() {
   const now    = new Date();
+  const today  = now.toLocaleDateString('sv-SE'); // YYYY-MM-DD
   const nowNum = now.getHours() * 100 + now.getMinutes();
-  let foundCurrent = false;
+  const isWeddingDay = today === WEDDING_DATE;
 
   document.querySelectorAll('.tl-item').forEach(item => {
     const start = parseInt(item.dataset.start);
     const end   = parseInt(item.dataset.end);
     item.classList.remove('done', 'current');
-
-    // 기존 배지 제거
     const badge = item.querySelector('.tl-now-badge');
     if (badge) badge.remove();
+  });
+
+  if (!isWeddingDay) return;
+
+  let foundCurrent = false;
+  document.querySelectorAll('.tl-item').forEach(item => {
+    const start = parseInt(item.dataset.start);
+    const end   = parseInt(item.dataset.end);
 
     if (nowNum >= end) {
       item.classList.add('done');
